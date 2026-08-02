@@ -238,7 +238,9 @@ def validate_profile_artifacts(
     metadata_count = _safe_metadata_count(metadata_path, errors)
     symbol_count = _safe_symbol_count(metadata_path, symbol_path, errors)
     index_count, index_dimension = _safe_index_summary(index_path, errors)
-    _compare_counts("profile manifest", manifest_count, "metadata", metadata_count, errors)
+    _compare_counts(
+        "profile manifest", manifest_count, "metadata", metadata_count, errors
+    )
     _compare_counts(
         "profile manifest", manifest_count, "symbol index", symbol_count, errors
     )
@@ -273,7 +275,9 @@ def validate_profile_artifacts(
     )
     actual_symbol_sha = _compare_file_hash(
         symbol_path,
-        identity.symbol_index_sha256 if identity is not None else profile.symbol_index_sha256,
+        identity.symbol_index_sha256
+        if identity is not None
+        else profile.symbol_index_sha256,
         "symbol index",
         errors,
     )
@@ -444,9 +448,7 @@ def _generic_dataset_paths(
         manifest_path = _below_data_root(
             root, identity.embedding_manifest_path, "embedding manifest"
         )
-        symbol_path = _below_data_root(
-            root, identity.symbol_index_path, "symbol index"
-        )
+        symbol_path = _below_data_root(root, identity.symbol_index_path, "symbol index")
     elif uses_generic_layout:
         profile_root = _GENERIC_PROFILE_ROOT
         index_path = _below_data_root(
@@ -578,8 +580,7 @@ def _validate_identity_manifest(
         and identity.embedding_manifest_sha256 != actual_manifest_sha
     ):
         errors.append(
-            "dataset profile artifact manifestのembedding_manifest_sha256が"
-            "不一致です。"
+            "dataset profile artifact manifestのembedding_manifest_sha256が不一致です。"
         )
     _compare_counts(
         "dataset profile artifact manifest",
@@ -597,9 +598,13 @@ def _validate_identity_manifest(
         return
     if dataset is not None:
         if identity.dataset_name != dataset.dataset_name:
-            errors.append("profile artifactのdataset_nameがdataset manifestと不一致です。")
+            errors.append(
+                "profile artifactのdataset_nameがdataset manifestと不一致です。"
+            )
         if identity.dataset_slug != dataset.dataset_slug:
-            errors.append("profile artifactのdataset_slugがdataset manifestと不一致です。")
+            errors.append(
+                "profile artifactのdataset_slugがdataset manifestと不一致です。"
+            )
         _compare_counts(
             "dataset manifest",
             dataset.chunk_count,
@@ -613,9 +618,7 @@ def _below_data_root(root: Path, value: str | None, label: str) -> Path:
     relative = safe_profile_relative_path(value, label)
     candidate = (root / relative).resolve()
     if not candidate.is_relative_to(root):
-        raise ValueError(
-            f"profileの{label} pathがdata-root外を参照します: {value}"
-        )
+        raise ValueError(f"profileの{label} pathがdata-root外を参照します: {value}")
     return candidate
 
 
@@ -759,8 +762,7 @@ def _compare_baseline_metadata(
         )
     if manifest.get("input_jsonl_sha256") != baseline_sha:
         errors.append(
-            "profile manifestのinput_jsonl_sha256がbaseline metadataと"
-            "一致しません。"
+            "profile manifestのinput_jsonl_sha256がbaseline metadataと一致しません。"
         )
 
 
@@ -773,8 +775,7 @@ def _compare_counts(
 ) -> None:
     if first is not None and second is not None and first != second:
         errors.append(
-            f"{first_label}と{second_label}の件数が一致しません: "
-            f"{first} != {second}"
+            f"{first_label}と{second_label}の件数が一致しません: {first} != {second}"
         )
 
 

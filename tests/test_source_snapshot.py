@@ -15,10 +15,7 @@ from python_doc_rag.source_snapshot import (
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT_PATH = (
-    REPOSITORY_ROOT
-    / "resources"
-    / "source_snapshots"
-    / "python-3.13-ja-2026-07-20.zip"
+    REPOSITORY_ROOT / "resources" / "source_snapshots" / "python-3.13-ja-2026-07-20.zip"
 )
 PROVENANCE_PATH = SNAPSHOT_PATH.with_suffix(".provenance.json")
 ORIGINAL_RECORDED_SHA256 = (
@@ -254,8 +251,9 @@ def test_repository_snapshot_matches_recorded_provenance() -> None:
     assert provenance["project_snapshot"]["member_count"] == (
         PROJECT_SNAPSHOT_MEMBER_COUNT
     )
-    assert provenance["upstream"]["original_recorded_archive_sha256"] != (
-        provenance["project_snapshot"]["sha256"]
+    assert (
+        provenance["upstream"]["original_recorded_archive_sha256"]
+        != (provenance["project_snapshot"]["sha256"])
     )
 
     serialized = json.dumps(provenance, ensure_ascii=False)

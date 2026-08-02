@@ -115,9 +115,7 @@ def test_symbol_retriever_ranks_exact_match_and_preserves_metadata() -> None:
     suffix = _chunk("suffix", text="obj.isatty()", index=0)
     exact = _chunk("exact", text="IOBase.isatty()", index=1)
     chunks = [suffix, exact]
-    retriever = SymbolRetriever(
-        chunks, [symbol_record_for(chunk) for chunk in chunks]
-    )
+    retriever = SymbolRetriever(chunks, [symbol_record_for(chunk) for chunk in chunks])
 
     results = retriever.search("IOBase.isatty()とは？", top_k=2)
 

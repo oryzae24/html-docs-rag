@@ -38,8 +38,7 @@ def main() -> int:
     manifest_path = output_root / "manifest.json"
     baseline_paths = {
         args.input_jsonl.expanduser().resolve(),
-        args.input_jsonl.expanduser().parent.parent
-        / "indexes/python_3_13_ja.faiss",
+        args.input_jsonl.expanduser().parent.parent / "indexes/python_3_13_ja.faiss",
     }
     if any(
         path.expanduser().resolve() in baseline_paths

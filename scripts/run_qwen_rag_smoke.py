@@ -74,8 +74,7 @@ def main() -> None:
     data_root = _resolve_data_root(args.data_root)
     index_path = args.index_path or data_root / "indexes/python_3_13_ja.faiss"
     metadata_path = (
-        args.metadata_path
-        or data_root / "indexes/python_3_13_ja_metadata.jsonl"
+        args.metadata_path or data_root / "indexes/python_3_13_ja_metadata.jsonl"
     )
     manifest_path = (
         args.index_manifest_path
@@ -84,10 +83,7 @@ def main() -> None:
     questions_path = (
         args.questions_path or repository_root / "evaluation/qwen_smoke_questions.jsonl"
     )
-    output_path = (
-        args.output_path
-        or data_root / "experiments/qwen_rag_smoke.json"
-    )
+    output_path = args.output_path or data_root / "experiments/qwen_rag_smoke.json"
 
     import torch
     import transformers
@@ -97,7 +93,9 @@ def main() -> None:
     embedding_model_name = args.embedding_model or str(manifest["model_name"])
     questions = load_evaluation_questions(questions_path)
     if len(questions) != 3:
-        raise ValueError(f"expected exactly 3 evaluation questions, got {len(questions)}")
+        raise ValueError(
+            f"expected exactly 3 evaluation questions, got {len(questions)}"
+        )
 
     model_cached_before = _has_cached_snapshot(args.model_name)
     embedding_started_at = time.perf_counter()
@@ -157,12 +155,9 @@ def main() -> None:
         url_count = len(_URL_PATTERN.findall(answer.answer_text))
         markdown_link_count = len(_MARKDOWN_LINK_PATTERN.findall(answer.answer_text))
         citation_valid = bool(citation_numbers) and all(
-            1 <= number <= len(answer.retrieved_chunks)
-            for number in citation_numbers
+            1 <= number <= len(answer.retrieved_chunks) for number in citation_numbers
         )
-        sources_from_selected_chunks = all(
-            url in selected_urls for url in source_urls
-        )
+        sources_from_selected_chunks = all(url in selected_urls for url in source_urls)
         trusted_source_urls = all(
             url.startswith(_TRUSTED_SOURCE_PREFIX) for url in source_urls
         )
@@ -226,9 +221,7 @@ def main() -> None:
             "retry_count": sum(
                 max(0, item["generation_attempts"] - 1) for item in results
             ),
-            "all_sources_trusted": all(
-                item["trusted_source_urls"] for item in results
-            ),
+            "all_sources_trusted": all(item["trusted_source_urls"] for item in results),
             "peak_memory_allocated_bytes": max(
                 item["max_memory_allocated_bytes"] for item in results
             ),
@@ -251,9 +244,7 @@ def _resolve_data_root(argument: Path | None) -> Path:
     configured = os.environ.get("PYTHON_DOC_RAG_DATA_ROOT")
     if configured:
         return Path(configured).expanduser()
-    raise ValueError(
-        "set PYTHON_DOC_RAG_DATA_ROOT or pass --data-root"
-    )
+    raise ValueError("set PYTHON_DOC_RAG_DATA_ROOT or pass --data-root")
 
 
 def _read_json(path: Path) -> dict[str, Any]:

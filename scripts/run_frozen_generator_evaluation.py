@@ -217,9 +217,7 @@ def main() -> int:
             ),
             "generation_call_count": len(history),
             "generation_input_tokens": sum(item.input_tokens for item in history),
-            "generation_output_tokens": sum(
-                item.generated_tokens for item in history
-            ),
+            "generation_output_tokens": sum(item.generated_tokens for item in history),
             "frozen_retriever_call_count": retriever.calls,
         }
     )

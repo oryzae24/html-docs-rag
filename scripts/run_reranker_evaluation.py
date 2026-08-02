@@ -63,8 +63,15 @@ def parse_args() -> argparse.Namespace:
         choices=("development", "holdout"),
         default="development",
     )
-    parser.add_argument("--model-key", choices=("bge-m3", "mmarco-minilm"), required=True)
-    parser.add_argument("--candidate-source", nargs="+", choices=("dense", "hybrid"), default=("dense", "hybrid"))
+    parser.add_argument(
+        "--model-key", choices=("bge-m3", "mmarco-minilm"), required=True
+    )
+    parser.add_argument(
+        "--candidate-source",
+        nargs="+",
+        choices=("dense", "hybrid"),
+        default=("dense", "hybrid"),
+    )
     parser.add_argument("--candidate-k", nargs="+", type=_candidate_k, default=(20, 30))
     parser.add_argument("--batch-size", type=_positive_int, default=16)
     parser.add_argument("--device", default="cuda")

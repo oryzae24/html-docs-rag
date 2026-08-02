@@ -198,8 +198,7 @@ def build_runtime(
     runtime_started = perf_counter()
     baseline_index_path = args.index_path or data_root / "indexes/python_3_13_ja.faiss"
     baseline_metadata_path = (
-        args.metadata_path
-        or data_root / "indexes/python_3_13_ja_metadata.jsonl"
+        args.metadata_path or data_root / "indexes/python_3_13_ja_metadata.jsonl"
     )
     baseline_manifest_path = (
         args.index_manifest_path
@@ -363,9 +362,7 @@ def build_runtime(
         "faiss_version": importlib.metadata.version("faiss-cpu"),
         "device": actual_device,
         "gpu_name": (
-            torch.cuda.get_device_name(0)
-            if actual_device.startswith("cuda")
-            else None
+            torch.cuda.get_device_name(0) if actual_device.startswith("cuda") else None
         ),
         "dtype": generator.dtype_name,
         "generation_model": generator.model_name,
@@ -379,18 +376,14 @@ def build_runtime(
             PARENT_RETRIEVAL_REVISION if context_mode == "parent" else None
         ),
         "parent_metadata_path": (
-            str(parent_metadata_path.expanduser())
-            if context_mode == "parent"
-            else None
+            str(parent_metadata_path.expanduser()) if context_mode == "parent" else None
         ),
         "parent_count": parent_store.parent_count if parent_store else None,
         "section_parent_revision": (
             SECTION_PARENT_REVISION if context_mode == "section-parent" else None
         ),
         "section_path": (
-            str(section_path.expanduser())
-            if context_mode == "section-parent"
-            else None
+            str(section_path.expanduser()) if context_mode == "section-parent" else None
         ),
         "section_count": section_store.section_count if section_store else None,
         "indexed_chunk_count": vector_index.chunk_count,
@@ -408,9 +401,7 @@ def build_runtime(
         "reranker_model_license": (
             reranker_spec.license if reranker_spec is not None else None
         ),
-        "reranker_trust_remote_code": (
-            False if reranker_spec is not None else None
-        ),
+        "reranker_trust_remote_code": (False if reranker_spec is not None else None),
         "reranker_load_seconds": reranker_load_seconds,
         "qwen_load_seconds": qwen_load_seconds,
         "runtime_build_seconds": perf_counter() - runtime_started,
@@ -455,8 +446,7 @@ def _settings(
         "context_mode": getattr(args, "context_mode", "chunk"),
         "child_candidate_k": (
             getattr(args, "child_candidate_k", 60)
-            if getattr(args, "context_mode", "chunk")
-            in {"parent", "section-parent"}
+            if getattr(args, "context_mode", "chunk") in {"parent", "section-parent"}
             else None
         ),
         "section_parent_revision": (
@@ -547,11 +537,7 @@ def _resolve_dataset_type(path: Path, requested: str) -> str:
                 row = json.loads(line)
                 if not isinstance(row, dict):
                     break
-                return (
-                    "rag-quality"
-                    if "required_facts" in row
-                    else "answerability"
-                )
+                return "rag-quality" if "required_facts" in row else "answerability"
     raise ValueError(f"cannot detect dataset type from empty file: {path}")
 
 
@@ -585,8 +571,7 @@ def _print_summary(path: Path) -> None:
     print(f"Questions: {summary['question_count']}")
     print(f"Generation success: {summary['generation_success_rate']:.4f}")
     print(
-        "First-attempt contract: "
-        f"{summary['first_attempt_contract_success_rate']:.4f}"
+        f"First-attempt contract: {summary['first_attempt_contract_success_rate']:.4f}"
     )
     print(f"Retry used: {summary['retry_used_rate']:.4f}")
     print(f"Contract failed: {summary['contract_failed_rate']:.4f}")
@@ -607,20 +592,11 @@ def _print_summary(path: Path) -> None:
         print(f"Completeness: {summary['average_completeness']:.4f}")
         print(f"Unsupported claims: {summary['unsupported_claim_count']}")
         print(f"Missing required facts: {summary['missing_required_fact_count']}")
-        print(
-            f"Grounded: {summary['grounded_count']} "
-            f"({summary['grounded_rate']:.4f})"
-        )
+        print(f"Grounded: {summary['grounded_count']} ({summary['grounded_rate']:.4f})")
         print(f"Coverage labels: {summary['coverage_label_counts']}")
-        print(
-            "Answerability labels: "
-            f"{summary['derived_answerability_label_counts']}"
-        )
+        print(f"Answerability labels: {summary['derived_answerability_label_counts']}")
         print(f"Raw judge errors: {summary['raw_judge_error_count']}")
-        print(
-            "Derived semantic errors: "
-            f"{summary['derived_semantic_error_count']}"
-        )
+        print(f"Derived semantic errors: {summary['derived_semantic_error_count']}")
         print(f"Judge total tokens: {summary['judge_total_tokens']}")
     print(f"Saved: {path}")
 

@@ -87,9 +87,7 @@ def parse_args() -> argparse.Namespace:
         required=True,
     )
     parser.add_argument("--field-config", choices=tuple(_FIELD_CONFIGS))
-    parser.add_argument(
-        "--embedding-key", choices=("bge-m3", "multilingual-e5-base")
-    )
+    parser.add_argument("--embedding-key", choices=("bge-m3", "multilingual-e5-base"))
     parser.add_argument("--embedding-root", type=Path)
     parser.add_argument("--hard-case-id", action="append", default=[])
     parser.add_argument("--source-code-commit", required=True)
@@ -140,9 +138,7 @@ def main() -> int:
     else:
         baseline_manifest = _read_json(baseline_manifest_path)
         embedding_model_name = str(baseline_manifest["model_name"])
-        model = SentenceTransformer(
-            embedding_model_name, device=args.device
-        )
+        model = SentenceTransformer(embedding_model_name, device=args.device)
         body_searcher = load_vector_index(
             baseline_index_path,
             metadata_path,
@@ -152,9 +148,7 @@ def main() -> int:
         selected_manifest_path = baseline_manifest_path
     embedding_load_seconds = perf_counter() - embedding_started
 
-    lexical_all = BM25Retriever(
-        chunks, tokenizer=CodeAwareNgramTokenizer((2,))
-    )
+    lexical_all = BM25Retriever(chunks, tokenizer=CodeAwareNgramTokenizer((2,)))
     if args.mode == "recommended-v1":
         candidate_searcher: Any = ReciprocalRankFusionRetriever(
             [VectorIndexRetriever(body_searcher), lexical_all],
@@ -169,9 +163,7 @@ def main() -> int:
         field_weights = _FIELD_CONFIGS[args.field_config]
         field_retrievers = {
             "identifiers": SymbolRetriever(chunks, records),
-            "section_title": FieldBM25Retriever(
-                chunks, field="section_title"
-            ),
+            "section_title": FieldBM25Retriever(chunks, field="section_title"),
             "page_title": FieldBM25Retriever(chunks, field="page_title"),
             "body_dense": VectorIndexRetriever(body_searcher),
             "body_lexical": FieldBM25Retriever(chunks, field="body"),
@@ -263,9 +255,7 @@ def main() -> int:
                 "faiss_version": importlib.metadata.version("faiss-cpu"),
                 "device": args.device,
                 "gpu_name": (
-                    torch.cuda.get_device_name(0)
-                    if torch.cuda.is_available()
-                    else None
+                    torch.cuda.get_device_name(0) if torch.cuda.is_available() else None
                 ),
                 "embedding_load_seconds": embedding_load_seconds,
                 "reranker_load_seconds": reranker_load_seconds,

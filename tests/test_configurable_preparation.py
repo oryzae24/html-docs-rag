@@ -99,7 +99,9 @@ def _fake_dense_builder(
     index_path.parent.mkdir(parents=True, exist_ok=True)
     index_path.write_bytes(b"fixture-index")
     metadata_path.write_bytes(input_path.read_bytes())
-    rows = sum(1 for line in metadata_path.read_text(encoding="utf-8").splitlines() if line)
+    rows = sum(
+        1 for line in metadata_path.read_text(encoding="utf-8").splitlines() if line
+    )
     manifest_path.write_text(
         json.dumps(
             {
@@ -518,7 +520,9 @@ def test_http_prepare_continues_after_one_parser_failure(
 ) -> None:
     config = tmp_path / "http.toml"
     _write_config(config, loader="http")
-    good_html = "<html><main><h1 id='ok'>OK</h1><p>enough fixture text</p></main></html>"
+    good_html = (
+        "<html><main><h1 id='ok'>OK</h1><p>enough fixture text</p></main></html>"
+    )
     bad_html = "<html><body><nav>only navigation</nav></body></html>"
 
     def document(url: str, html: str) -> SourceDocument:

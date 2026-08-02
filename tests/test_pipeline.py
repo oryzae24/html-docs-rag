@@ -70,9 +70,7 @@ class FakeTokenizer:
         add_generation_prompt: bool,
         **kwargs: object,
     ) -> str:
-        self.chat_calls.append(
-            (conversation, tokenize, add_generation_prompt)
-        )
+        self.chat_calls.append((conversation, tokenize, add_generation_prompt))
         self.chat_options.append(kwargs)
         return f"<user>{conversation[0]['content']}</user><assistant>"
 
@@ -275,10 +273,7 @@ def test_chat_template_final_string_is_counted_and_generated_unchanged() -> None
     generator = CapturingGenerator("テンプレート済み回答[S1]")
     chunk = make_chunk(
         "chat",
-        text=(
-            "本文 https://example.invalid/fake "
-            "/workspace/private/secret.html"
-        ),
+        text=("本文 https://example.invalid/fake /workspace/private/secret.html"),
         source_path="/content/gdrive/private/data.json",
     )
 

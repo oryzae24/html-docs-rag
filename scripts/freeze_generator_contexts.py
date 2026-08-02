@@ -176,7 +176,9 @@ def main() -> int:
                     dataset=dataset,
                     chunks=tuple(result.chunk for result in results),
                     rerank_scores=tuple(match.rerank_score for match in trace.matches),
-                    original_ranks=tuple(match.original_rank for match in trace.matches),
+                    original_ranks=tuple(
+                        match.original_rank for match in trace.matches
+                    ),
                 )
             )
     save_frozen_contexts_atomic(
@@ -193,9 +195,7 @@ def main() -> int:
             "embedding_revision": embedding_revision,
             "symbol_sidecar_sha256": _sha256(args.symbol_sidecar),
             "embedding_index_sha256": _sha256(index_path),
-            "answerability_questions_sha256": _sha256(
-                args.answerability_questions
-            ),
+            "answerability_questions_sha256": _sha256(args.answerability_questions),
             "rag_questions_sha256": _sha256(args.rag_questions),
             "hard_case_questions_sha256": (
                 _sha256(args.hard_case_questions)

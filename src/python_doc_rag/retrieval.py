@@ -78,8 +78,7 @@ class CodeAwareNgramTokenizer:
             run = match.group()
             for size in self._ngram_sizes:
                 tokens.extend(
-                    run[offset : offset + size]
-                    for offset in range(len(run) - size + 1)
+                    run[offset : offset + size] for offset in range(len(run) - size + 1)
                 )
         return tuple(tokens)
 
@@ -99,11 +98,7 @@ class BM25Retriever:
             raise ValueError("BM25 corpus must contain at least one chunk")
         if isinstance(k1, bool) or not isinstance(k1, int | float) or k1 <= 0:
             raise ValueError("k1 must be greater than zero")
-        if (
-            isinstance(b, bool)
-            or not isinstance(b, int | float)
-            or not 0 <= b <= 1
-        ):
+        if isinstance(b, bool) or not isinstance(b, int | float) or not 0 <= b <= 1:
             raise ValueError("b must be between zero and one")
 
         self._chunks = tuple(chunks)
@@ -153,8 +148,7 @@ class BM25Retriever:
             )
             for position, term_frequency in postings:
                 length_ratio = (
-                    self._document_lengths[position]
-                    / self._average_document_length
+                    self._document_lengths[position] / self._average_document_length
                 )
                 denominator = term_frequency + self._k1 * (
                     1.0 - self._b + self._b * length_ratio

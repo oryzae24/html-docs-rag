@@ -686,7 +686,9 @@ def _sha256(table: dict[str, Any], key: str) -> str:
 def _bounded_timeout(table: dict[str, Any]) -> float:
     timeout = _number(table, "timeout_seconds", default=15.0)
     if timeout <= 0 or timeout > 300:
-        raise ValueError("loader.timeout_seconds must be greater than 0 and at most 300")
+        raise ValueError(
+            "loader.timeout_seconds must be greater than 0 and at most 300"
+        )
     return timeout
 
 
@@ -716,7 +718,9 @@ def _selector_list(value: object, label: str) -> tuple[str, ...]:
         try:
             soupsieve.compile(selector)
         except Exception as error:
-            raise ValueError(f"invalid CSS selector in parser.{label}: {selector}") from error
+            raise ValueError(
+                f"invalid CSS selector in parser.{label}: {selector}"
+            ) from error
     return selectors
 
 

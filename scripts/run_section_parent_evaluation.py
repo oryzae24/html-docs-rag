@@ -150,7 +150,9 @@ def main() -> int:
             child_overlap=overlap,
         )
         if _configured_model(artifact_root, (size, overlap)) != embedding_model_name:
-            raise ValueError("section child configurations use different embedding models")
+            raise ValueError(
+                "section child configurations use different embedding models"
+            )
         vector_index = load_vector_index(
             index_path,
             metadata_path,
@@ -247,9 +249,7 @@ def main() -> int:
                     args.reranker_max_length if reranker_spec is not None else None
                 ),
                 "japanese_ngram_sizes": (
-                    list(_HYBRID_NGRAM_SIZES)
-                    if retriever_name == "hybrid"
-                    else None
+                    list(_HYBRID_NGRAM_SIZES) if retriever_name == "hybrid" else None
                 ),
                 "rrf_k": _HYBRID_RRF_K if retriever_name == "hybrid" else None,
                 "hybrid_candidate_k": (
@@ -306,9 +306,7 @@ def main() -> int:
 def _configured_model(artifact_root: Path, config: tuple[int, int]) -> str:
     size, overlap = config
     manifest = _read_json(
-        artifact_root
-        / f"child-{size}-overlap-{overlap}"
-        / "child_index_manifest.json"
+        artifact_root / f"child-{size}-overlap-{overlap}" / "child_index_manifest.json"
     )
     model = manifest.get("model_name")
     if not isinstance(model, str) or not model:
@@ -365,9 +363,7 @@ def _attach_section_diagnostics(
             "child_candidate_count": trace.child_candidate_count,
             "unique_section_candidate_count": trace.unique_parent_candidate_count,
             "child_to_section_compression_ratio": trace.compression_ratio,
-            "maximum_children_for_one_section": (
-                trace.maximum_children_for_one_parent
-            ),
+            "maximum_children_for_one_section": (trace.maximum_children_for_one_parent),
             "matches": [
                 {
                     "section_rank": match.parent_rank,

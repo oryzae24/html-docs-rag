@@ -113,9 +113,7 @@ class LocalHtmlTreeLoader:
                 logical_path=logical_path,
                 category=PurePosixPath(logical_path).parts[0],
                 metadata=(
-                    {"python_version": PYTHON_DOC_VERSION}
-                    if self._legacy_mode
-                    else {}
+                    {"python_version": PYTHON_DOC_VERSION} if self._legacy_mode else {}
                 ),
             )
 

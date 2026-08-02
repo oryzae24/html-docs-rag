@@ -434,6 +434,7 @@ uv lock --check
 uv sync --frozen
 uv run --frozen pytest -q
 uv run --frozen ruff check .
+uv run --frozen ruff format --check .
 ```
 
 Validate every optional dependency group:

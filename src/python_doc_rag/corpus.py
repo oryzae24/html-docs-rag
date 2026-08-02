@@ -101,9 +101,7 @@ def enumerate_html_files(
                 resolved_candidate = candidate.resolve(strict=True)
                 relative_path = resolved_candidate.relative_to(root).as_posix()
             except (OSError, ValueError):
-                skipped_unsafe_paths.append(
-                    candidate.relative_to(root).as_posix()
-                )
+                skipped_unsafe_paths.append(candidate.relative_to(root).as_posix())
                 continue
             category_files.append((relative_path, resolved_candidate))
 
@@ -280,7 +278,12 @@ def _temporary_sibling(output_path: Path) -> Path:
 def _validate_category(category: str) -> None:
     """Reject category names that could escape the documentation root."""
     path = PurePosixPath(category)
-    if not category or path.is_absolute() or len(path.parts) != 1 or category in {".", ".."}:
+    if (
+        not category
+        or path.is_absolute()
+        or len(path.parts) != 1
+        or category in {".", ".."}
+    ):
         raise ValueError(f"invalid documentation category: {category!r}")
 
 

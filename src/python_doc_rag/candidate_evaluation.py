@@ -64,10 +64,7 @@ def evaluate_candidate_recall(
                     {urldefrag(result.source_url).url for result in results}
                 ),
                 "unique_section_count": len(
-                    {
-                        (result.source_url, result.section_title)
-                        for result in results
-                    }
+                    {(result.source_url, result.section_title) for result in results}
                 ),
                 "candidate_generation_seconds": elapsed,
                 "results": [
@@ -152,9 +149,7 @@ def _summarize(rows: Sequence[Mapping[str, Any]]) -> dict[str, int | float]:
         "recall_at_10": _rate(rows, "recall_at_10"),
         "recall_at_20": _rate(rows, "recall_at_20"),
         "recall_at_30": _rate(rows, "recall_at_30"),
-        "expected_url_candidate_rate": _rate(
-            rows, "expected_url_in_candidates"
-        ),
+        "expected_url_candidate_rate": _rate(rows, "expected_url_in_candidates"),
         "average_unique_url_count": _mean(rows, "unique_url_count"),
         "average_unique_page_count": _mean(rows, "unique_page_count"),
         "average_unique_section_count": _mean(rows, "unique_section_count"),

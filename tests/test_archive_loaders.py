@@ -308,9 +308,7 @@ def test_snapshot_first_download_creates_complete_portable_source_lock(
     documents = loader.load()
 
     assert len(transport.calls) == 1
-    assert [document.logical_path for document in documents] == [
-        "tutorial/page.html"
-    ]
+    assert [document.logical_path for document in documents] == ["tutorial/page.html"]
     lock = json.loads((raw_root / "source.lock.json").read_text())
     assert lock["complete"] is True
     assert lock["requested_url"] == "https://example.test/archive.zip"
@@ -322,8 +320,7 @@ def test_snapshot_first_download_creates_complete_portable_source_lock(
     assert lock["cache_relative_path"] == f"archives/{_sha256(payload)}.zip"
     assert lock["fetched_at"] == "2026-08-01T12:30:00+00:00"
     assert not any(
-        isinstance(value, str) and value.startswith("/")
-        for value in _all_values(lock)
+        isinstance(value, str) and value.startswith("/") for value in _all_values(lock)
     )
     assert str(tmp_path) not in json.dumps(lock)
     assert (raw_root / lock["cache_relative_path"]).read_bytes() == payload
@@ -454,9 +451,7 @@ def test_snapshot_refresh_repairs_corrupt_content_addressed_archive(
 
 def test_snapshot_download_retries_only_up_to_configured_limit(tmp_path: Path) -> None:
     payload = _archive_bytes()
-    transport = _FakeTransport(
-        [RuntimeError("temporary failure"), _Response(payload)]
-    )
+    transport = _FakeTransport([RuntimeError("temporary failure"), _Response(payload)])
     loader = SnapshotHttpArchiveHtmlLoader(
         _snapshot_settings(max_retries=1),
         tmp_path / "raw",
@@ -529,12 +524,8 @@ def test_snapshot_retry_keeps_download_inode_after_staging_path_swap(
 def test_snapshot_normal_load_does_not_refresh_but_explicit_refresh_does(
     tmp_path: Path,
 ) -> None:
-    first_payload = _archive_bytes(
-        {"tutorial/page.html": "<html>version one</html>"}
-    )
-    second_payload = _archive_bytes(
-        {"tutorial/page.html": "<html>version two</html>"}
-    )
+    first_payload = _archive_bytes({"tutorial/page.html": "<html>version one</html>"})
+    second_payload = _archive_bytes({"tutorial/page.html": "<html>version two</html>"})
     raw_root = tmp_path / "raw"
     SnapshotHttpArchiveHtmlLoader(
         _snapshot_settings(),
@@ -621,7 +612,9 @@ def test_snapshot_rejects_actual_oversize_download_and_removes_partial(
     assert not list(raw_root.glob(".archive-download-*.zip"))
 
 
-def test_snapshot_download_failure_does_not_publish_partial_cache(tmp_path: Path) -> None:
+def test_snapshot_download_failure_does_not_publish_partial_cache(
+    tmp_path: Path,
+) -> None:
     raw_root = tmp_path / "raw"
     transport = _FakeTransport([RuntimeError("connection lost")])
     loader = SnapshotHttpArchiveHtmlLoader(
@@ -646,9 +639,7 @@ def test_snapshot_rejects_transport_size_mismatch(tmp_path: Path) -> None:
         _snapshot_settings(),
         raw_root,
         source_config_sha256="d" * 64,
-        transport=_FakeTransport(
-            [_Response(payload, reported_size=len(payload) + 1)]
-        ),
+        transport=_FakeTransport([_Response(payload, reported_size=len(payload) + 1)]),
     )
 
     with pytest.raises(ValueError, match="transport result"):
@@ -761,12 +752,8 @@ def test_snapshot_refresh_failure_preserves_old_lock_manifest_and_cache(
 def test_snapshot_downstream_rollback_restores_old_lock_and_manifest(
     tmp_path: Path,
 ) -> None:
-    first_payload = _archive_bytes(
-        {"tutorial/page.html": "<html>version one</html>"}
-    )
-    second_payload = _archive_bytes(
-        {"tutorial/page.html": "<html>version two</html>"}
-    )
+    first_payload = _archive_bytes({"tutorial/page.html": "<html>version one</html>"})
+    second_payload = _archive_bytes({"tutorial/page.html": "<html>version two</html>"})
     raw_root = tmp_path / "raw"
     SnapshotHttpArchiveHtmlLoader(
         _snapshot_settings(),
@@ -827,12 +814,8 @@ def test_snapshot_refresh_replaces_corrupt_lock_and_can_restore_opaque_bytes(
 def test_snapshot_next_load_recovers_uncommitted_refresh_journal(
     tmp_path: Path,
 ) -> None:
-    first_payload = _archive_bytes(
-        {"tutorial/page.html": "<html>version one</html>"}
-    )
-    second_payload = _archive_bytes(
-        {"tutorial/page.html": "<html>version two</html>"}
-    )
+    first_payload = _archive_bytes({"tutorial/page.html": "<html>version one</html>"})
+    second_payload = _archive_bytes({"tutorial/page.html": "<html>version two</html>"})
     raw_root = tmp_path / "raw"
     SnapshotHttpArchiveHtmlLoader(
         _snapshot_settings(),
@@ -867,12 +850,8 @@ def test_snapshot_next_load_recovers_uncommitted_refresh_journal(
 def test_snapshot_dataset_manifest_forward_commits_refresh_journal(
     tmp_path: Path,
 ) -> None:
-    first_payload = _archive_bytes(
-        {"tutorial/page.html": "<html>version one</html>"}
-    )
-    second_payload = _archive_bytes(
-        {"tutorial/page.html": "<html>version two</html>"}
-    )
+    first_payload = _archive_bytes({"tutorial/page.html": "<html>version one</html>"})
+    second_payload = _archive_bytes({"tutorial/page.html": "<html>version two</html>"})
     data_root = tmp_path / "dataset"
     raw_root = data_root / "data/raw"
     settings = _snapshot_settings()
@@ -940,12 +919,8 @@ def test_snapshot_rollback_attempts_all_records_and_retains_failed_backup(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    first_payload = _archive_bytes(
-        {"tutorial/page.html": "<html>version one</html>"}
-    )
-    second_payload = _archive_bytes(
-        {"tutorial/page.html": "<html>version two</html>"}
-    )
+    first_payload = _archive_bytes({"tutorial/page.html": "<html>version one</html>"})
+    second_payload = _archive_bytes({"tutorial/page.html": "<html>version two</html>"})
     raw_root = tmp_path / "raw"
     SnapshotHttpArchiveHtmlLoader(
         _snapshot_settings(),
@@ -989,12 +964,8 @@ def test_snapshot_rollback_attempts_all_records_and_retains_failed_backup(
 def test_snapshot_recovery_does_not_retire_backup_for_missing_candidate_archive(
     tmp_path: Path,
 ) -> None:
-    first_payload = _archive_bytes(
-        {"tutorial/page.html": "<html>version one</html>"}
-    )
-    second_payload = _archive_bytes(
-        {"tutorial/page.html": "<html>version two</html>"}
-    )
+    first_payload = _archive_bytes({"tutorial/page.html": "<html>version one</html>"})
+    second_payload = _archive_bytes({"tutorial/page.html": "<html>version two</html>"})
     data_root = tmp_path / "data-root"
     raw_root = data_root / "data/raw"
     settings = _snapshot_settings()
@@ -1217,11 +1188,10 @@ def test_source_url_builder_quotes_path_and_rejects_origin_escape() -> None:
     assert build_source_url(
         "https://example.test/docs/",
         "tutorial/日本 語.html",
-    ) == (
-        "https://example.test/docs/tutorial/"
-        "%E6%97%A5%E6%9C%AC%20%E8%AA%9E.html"
-    )
+    ) == ("https://example.test/docs/tutorial/%E6%97%A5%E6%9C%AC%20%E8%AA%9E.html")
     with pytest.raises(ValueError, match="safe relative"):
         build_source_url("https://example.test/docs/", "../escape.html")
     with pytest.raises(ValueError, match="directory URL"):
-        build_source_url("https://example.test/docs/?next=https://evil.test", "page.html")
+        build_source_url(
+            "https://example.test/docs/?next=https://evil.test", "page.html"
+        )

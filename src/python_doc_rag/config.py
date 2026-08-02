@@ -5,9 +5,7 @@ from importlib import import_module
 from typing import Any
 
 MIN_SECTION_TEXT_LENGTH = 20
-DEFAULT_EMBEDDING_MODEL = (
-    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-)
+DEFAULT_EMBEDDING_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 DEFAULT_EMBEDDING_BATCH_SIZE = 64
 DEFAULT_GENERATION_MODEL = "Qwen/Qwen3-4B-Instruct-2507"
 

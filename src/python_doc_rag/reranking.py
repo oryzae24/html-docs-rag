@@ -42,8 +42,7 @@ RERANKER_MODEL_SPECS = (
         revision="1427fd652930e4ba29e8149678df786c240d8825",
         license="Apache-2.0",
         model_card_url=(
-            "https://huggingface.co/cross-encoder/"
-            "mmarco-mMiniLMv2-L12-H384-v1"
+            "https://huggingface.co/cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
         ),
         language_evidence="Model card language metadata explicitly includes Japanese.",
     ),
@@ -181,9 +180,7 @@ class RerankingRetriever:
             (query, _reranker_document(result.chunk)) for result in candidates
         )
         started_at = perf_counter()
-        scores = tuple(
-            self._scorer.score(pairs, batch_size=self._batch_size)
-        )
+        scores = tuple(self._scorer.score(pairs, batch_size=self._batch_size))
         scoring_seconds = perf_counter() - started_at
         _validate_scores(scores, expected=len(candidates))
         ranked = sorted(

@@ -53,6 +53,7 @@ def __getattr__(name: str) -> object:
         return exports[name]
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
+
 __all__ = [
     "ANSWER_OR_ABSTAIN_CONTRACT_REVISION",
     "AbstainedAnswer",

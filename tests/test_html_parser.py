@@ -71,7 +71,9 @@ def test_faq_title_and_standalone_permalink_are_handled() -> None:
         source_path="faq/programming.html",
     )
 
-    faq_section = next(section for section in sections if section.anchor == "standalone-binary")
+    faq_section = next(
+        section for section in sections if section.anchor == "standalone-binary"
+    )
     assert faq_section.section_title == "スタンドアロンバイナリを作るには？"
 
     anchor_fallback = next(
@@ -91,7 +93,9 @@ def test_standalone_permalink_is_removed_without_changing_content() -> None:
         source_path="faq/programming.html",
     )
 
-    faq_section = next(section for section in sections if section.anchor == "standalone-binary")
+    faq_section = next(
+        section for section in sections if section.anchor == "standalone-binary"
+    )
     assert "この段落の はパーマリンクです。" in faq_section.text
     assert "段落記号 ¶ は内容として残します。" in faq_section.text
     assert 'inline_marker = "¶"' in faq_section.text

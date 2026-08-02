@@ -27,8 +27,10 @@ def _write_zip(path: Path, members: list[Member]) -> Path:
                 info.create_system = 3
                 mode = explicit_mode
                 if mode is None:
-                    mode = (stat.S_IFDIR | 0o755) if name.endswith("/") else (
-                        stat.S_IFREG | 0o644
+                    mode = (
+                        (stat.S_IFDIR | 0o755)
+                        if name.endswith("/")
+                        else (stat.S_IFREG | 0o644)
                     )
                 info.external_attr = mode << 16
                 archive.writestr(info, content)
@@ -255,9 +257,7 @@ def test_safe_zip_does_not_enumerate_html_outside_archive_root(tmp_path: Path) -
 
     documents = _safe_loader(archive, tmp_path / "extracted").load()
 
-    assert [document.logical_path for document in documents] == [
-        "tutorial/page.html"
-    ]
+    assert [document.logical_path for document in documents] == ["tutorial/page.html"]
     assert all("outside" not in document.source_url for document in documents)
 
 
@@ -289,9 +289,7 @@ def test_safe_zip_rebuilds_cache_with_unrecorded_html(tmp_path: Path) -> None:
 
     documents = replay.load()
 
-    assert [document.logical_path for document in documents] == [
-        "tutorial/page.html"
-    ]
+    assert [document.logical_path for document in documents] == ["tutorial/page.html"]
     assert replay.cache_reused is False
     assert not injected.exists()
 
@@ -473,10 +471,7 @@ def test_safe_zip_preflights_member_count_before_zipfile_allocation(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    members = [
-        (f"docs/tutorial/{index}.html", b"", None)
-        for index in range(100)
-    ]
+    members = [(f"docs/tutorial/{index}.html", b"", None) for index in range(100)]
     archive = _write_zip(tmp_path / "many.zip", members)
 
     monkeypatch.setattr(
@@ -499,10 +494,7 @@ def test_safe_zip_preflight_counts_central_records_instead_of_trusting_eocd(
 ) -> None:
     archive = _write_zip(
         tmp_path / "forged-count.zip",
-        [
-            (f"docs/tutorial/{index}.html", b"", None)
-            for index in range(100)
-        ],
+        [(f"docs/tutorial/{index}.html", b"", None) for index in range(100)],
     )
     payload = bytearray(archive.read_bytes())
     eocd = payload.rfind(b"PK\x05\x06")

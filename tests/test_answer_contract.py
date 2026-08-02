@@ -35,8 +35,7 @@ def _finalize(raw: str, chunks: tuple[SearchChunk, ...] | None = None):
     [
         ('{"status":"answer","answer_text":"回答[S1]","reason":null}', "answer"),
         (
-            '{"status":"abstain","answer_text":"",'
-            '"reason":"insufficient_evidence"}',
+            '{"status":"abstain","answer_text":"","reason":"insufficient_evidence"}',
             "abstain",
         ),
         (
@@ -81,8 +80,10 @@ def test_parser_accepts_valid_contract(raw: str, status: str) -> None:
             '{"status":"abstain","answer_text":"","reason":"other"}',
             "unknown_reason",
         ),
-        ('{"status":"answer","answer_text":"回答[S1]","reason":NaN}',
-         "non_standard_json_value"),
+        (
+            '{"status":"answer","answer_text":"回答[S1]","reason":NaN}',
+            "non_standard_json_value",
+        ),
         ('["answer", "回答[S1]"]', "top_level_not_object"),
     ],
 )
@@ -119,8 +120,7 @@ def test_parser_rejects_invalid_contract(raw: str, reason: str) -> None:
             "url_detected",
         ),
         (
-            '{"status":"answer","answer_text":"[資料](path) 回答[S1]",'
-            '"reason":null}',
+            '{"status":"answer","answer_text":"[資料](path) 回答[S1]","reason":null}',
             "markdown_link_detected",
         ),
     ],
@@ -165,8 +165,7 @@ def test_abstain_rejects_every_nonempty_body(answer_text: str, reason: str) -> N
 def test_valid_abstain_is_normal_outcome_with_no_sources_and_keeps_chunks() -> None:
     chunks = (_chunk(),)
     outcome = _finalize(
-        '{"status":"abstain","answer_text":"",'
-        '"reason":"insufficient_evidence"}',
+        '{"status":"abstain","answer_text":"","reason":"insufficient_evidence"}',
         chunks,
     )
     assert isinstance(outcome, AbstainedAnswer)
@@ -195,8 +194,7 @@ def test_profile_contract_uses_sanitized_knowledge_base_scope(
     prompt = contract.build_initial_prompt("質問", (_chunk(),))
 
     assert (
-        "あなたはuv Documentation [URL除去済み] [パス除去済み]に基づいて"
-        "回答します。"
+        "あなたはuv Documentation [URL除去済み] [パス除去済み]に基づいて回答します。"
     ) in prompt
     assert "Python 3.13日本語公式ドキュメント" not in prompt
     assert "internal.invalid" not in prompt

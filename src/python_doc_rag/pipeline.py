@@ -51,7 +51,9 @@ class AnswerGenerationFailedError(RuntimeError):
     ) -> None:
         self.first_reasons = first_reasons
         self.second_reasons = second_reasons
-        super().__init__("answer generation failed contract validation on both attempts")
+        super().__init__(
+            "answer generation failed contract validation on both attempts"
+        )
 
 
 class RagPipeline:

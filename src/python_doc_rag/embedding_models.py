@@ -46,9 +46,7 @@ RETRIEVAL_EMBEDDING_SPECS = (
         model_name="intfloat/multilingual-e5-base",
         revision="d128750597153bb5987e10b1c3493a34e5a4502a",
         license="MIT",
-        model_card_url=(
-            "https://huggingface.co/intfloat/multilingual-e5-base"
-        ),
+        model_card_url=("https://huggingface.co/intfloat/multilingual-e5-base"),
         language_evidence=(
             "The model card lists 94 languages and requires query/passage "
             "prefixes for multilingual asymmetric retrieval."

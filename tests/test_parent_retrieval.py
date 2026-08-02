@@ -80,12 +80,8 @@ def test_parent_id_is_stable_and_uses_all_identity_fields(tmp_path: Path) -> Non
     assert parent_id_for_chunk(base) != parent_id_for_chunk(
         parent("a", url="https://trusted.invalid/other")
     )
-    assert parent_id_for_chunk(base) != parent_id_for_chunk(
-        parent("a", chunk_index=1)
-    )
-    assert parent_id_for_chunk(base) != parent_id_for_chunk(
-        parent("a", start_index=1)
-    )
+    assert parent_id_for_chunk(base) != parent_id_for_chunk(parent("a", chunk_index=1))
+    assert parent_id_for_chunk(base) != parent_id_for_chunk(parent("a", start_index=1))
 
     path = tmp_path / "parent.jsonl"
     write_chunks_jsonl_atomic([base], path)
@@ -218,9 +214,7 @@ def test_retriever_deduplicates_parent_and_preserves_first_child_score() -> None
         chunk_index=1,
         text="klmnopqrst" * 5,
     )
-    first_children, _ = create_child_chunks(
-        [first_parent], ChunkingConfig(20, 5)
-    )
+    first_children, _ = create_child_chunks([first_parent], ChunkingConfig(20, 5))
     second_child = child_for(second_parent)
     searcher = Searcher(
         [
@@ -256,7 +250,9 @@ def test_retriever_deduplicates_parent_and_preserves_first_child_score() -> None
 def test_retriever_candidate_shortage_ties_and_invalid_limits() -> None:
     first = parent("first")
     second = parent("second")
-    searcher = Searcher([result(1, child_for(first), 0.5), result(2, child_for(second), 0.5)])
+    searcher = Searcher(
+        [result(1, child_for(first), 0.5), result(2, child_for(second), 0.5)]
+    )
     retriever = ParentDocumentRetriever(
         searcher, ParentStore([first, second]), child_candidate_k=2
     )

@@ -53,8 +53,7 @@ def _write_chunks(path: Path, chunks: list[SearchChunk]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         "".join(
-            f"{json.dumps(chunk.to_dict(), ensure_ascii=False)}\n"
-            for chunk in chunks
+            f"{json.dumps(chunk.to_dict(), ensure_ascii=False)}\n" for chunk in chunks
         ),
         encoding="utf-8",
     )
@@ -99,8 +98,7 @@ def test_profile_paths_derive_exact_recommended_v2_outputs(tmp_path: Path) -> No
     paths = profile_artifact_paths(profile, tmp_path)
 
     assert paths.embedding_index_path == (
-        tmp_path
-        / "experiments/final_quality_sprint_v2/phase_a/embedding_indexes/"
+        tmp_path / "experiments/final_quality_sprint_v2/phase_a/embedding_indexes/"
         "bge-m3/index.faiss"
     )
     assert paths.embedding_metadata_path == paths.embedding_index_path.with_name(
@@ -110,8 +108,7 @@ def test_profile_paths_derive_exact_recommended_v2_outputs(tmp_path: Path) -> No
         "manifest.json"
     )
     assert paths.symbol_index_path == (
-        tmp_path
-        / "experiments/final_quality_sprint_v2/phase_a/symbol_fields.jsonl"
+        tmp_path / "experiments/final_quality_sprint_v2/phase_a/symbol_fields.jsonl"
     )
 
 

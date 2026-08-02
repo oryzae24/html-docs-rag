@@ -112,7 +112,9 @@ def load_portability_questions(path: Path) -> list[PortabilityQuestion]:
                     raise ValueError(f"line {line_number}: invalid answerable fields")
             else:
                 if expected_answer is not None or required_facts or expected_urls:
-                    raise ValueError(f"line {line_number}: unanswerable fields conflict")
+                    raise ValueError(
+                        f"line {line_number}: unanswerable fields conflict"
+                    )
                 if not isinstance(reason, str) or not reason.strip():
                     raise ValueError(f"line {line_number}: reason is required")
             rows.append(
@@ -186,8 +188,7 @@ def evaluate_portability_questions(
                     abstained
                     or bool(displayed_urls)
                     and all(
-                        f"[{source.label}]" in answer_text
-                        for source in answer.sources
+                        f"[{source.label}]" in answer_text for source in answer.sources
                     )
                 ),
                 answer_contains_url=bool(_URL_PATTERN.search(answer_text)),
@@ -256,11 +257,15 @@ def summarize_portability(records: Sequence[PortabilityCaseRecord]) -> dict[str,
         "contract_failure_count": sum(r.contract_failure for r in records),
         "correct_source_top5_count": sum(r.correct_source_top5 for r in answerable),
         "correct_source_cited_count": sum(r.correct_source_cited for r in answerable),
-        "citation_format_failure_count": sum(not r.citation_format_valid for r in completed),
+        "citation_format_failure_count": sum(
+            not r.citation_format_valid for r in completed
+        ),
         "answer_url_count": sum(r.answer_contains_url for r in records),
         "abstain_text_leakage_count": sum(r.abstain_text_leakage for r in records),
         "abstain_source_leakage_count": sum(r.abstain_source_leakage for r in records),
-        "source_boundary_failure_count": sum(not r.source_boundary_valid for r in records),
+        "source_boundary_failure_count": sum(
+            not r.source_boundary_valid for r in records
+        ),
         "average_retrieval_seconds": _average(r.retrieval_seconds for r in completed),
         "average_generation_seconds": _average(r.generation_seconds for r in completed),
         "average_total_seconds": _average(r.total_seconds for r in completed),

@@ -74,7 +74,9 @@ def test_reranker_batches_labeled_content_and_requests_bounded_candidates() -> N
     pairs, batch_size = scorer.calls[0]
     assert batch_size == 8
     assert pairs[0][0] == "質問"
-    assert pairs[0][1] == "ページタイトル: ページa\nセクションタイトル: 節a\n本文: 本文a"
+    assert (
+        pairs[0][1] == "ページタイトル: ページa\nセクションタイトル: 節a\n本文: 本文a"
+    )
 
 
 def test_reranker_ties_preserve_original_rank_and_metadata() -> None:

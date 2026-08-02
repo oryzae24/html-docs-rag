@@ -148,7 +148,10 @@ def _parse_all_sections(
             )
         except Exception as error:  # noqa: BLE001 - audit every input before failing
             failures.append(
-                {"source_path": source_path, "reason": f"{type(error).__name__}: {error}"}
+                {
+                    "source_path": source_path,
+                    "reason": f"{type(error).__name__}: {error}",
+                }
             )
             continue
         successful_count += 1
@@ -238,7 +241,9 @@ def _build_child_artifacts(
             "normalized_embeddings": True,
             "faiss_index_type": "IndexFlatIP",
             "index_build_time_seconds": result.elapsed_seconds,
-            "total_config_build_time_seconds": (finished_at - started_at).total_seconds(),
+            "total_config_build_time_seconds": (
+                finished_at - started_at
+            ).total_seconds(),
             "created_at": finished_at.isoformat(),
             "child_index_size_bytes": index_path.stat().st_size,
             "child_metadata_size_bytes": metadata_path.stat().st_size,

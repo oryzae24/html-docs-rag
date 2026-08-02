@@ -568,9 +568,7 @@ def test_repeatedly_cancelled_requests_hold_slot_until_each_worker_finishes(
     async def cancel_then_follow_repeatedly() -> None:
         loop_errors: list[dict[str, Any]] = []
         loop = asyncio.get_running_loop()
-        loop.set_exception_handler(
-            lambda _loop, context: loop_errors.append(context)
-        )
+        loop.set_exception_handler(lambda _loop, context: loop_errors.append(context))
         for request_index in range(5):
             started.clear()
             release.clear()
@@ -635,9 +633,7 @@ def test_cancelled_request_collects_worker_failure_before_releasing_slot(
     async def cancel_failing_worker_then_follow() -> None:
         loop_errors: list[dict[str, Any]] = []
         loop = asyncio.get_running_loop()
-        loop.set_exception_handler(
-            lambda _loop, context: loop_errors.append(context)
-        )
+        loop.set_exception_handler(lambda _loop, context: loop_errors.append(context))
         cancelled = asyncio.create_task(
             runtime.answer("python-docs", "cancelled-failure")
         )
@@ -710,9 +706,7 @@ def test_long_lived_runtime_isolates_metrics_after_history_trimming(
     runtime, generator, services = _metrics_runtime(tmp_path)
     requests: list[tuple[str, str, int]] = []
     for request_index in range(140):
-        knowledge_base_id = (
-            "python-docs" if request_index % 2 == 0 else "uv-docs"
-        )
+        knowledge_base_id = "python-docs" if request_index % 2 == 0 else "uv-docs"
         question_index = request_index // 2
         requests.append(
             (

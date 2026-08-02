@@ -156,7 +156,9 @@ def create_child_chunks(
             if child_start < 0 or child_start + len(child_text) > len(parent.text):
                 raise ValueError(f"invalid child_start_index for parent: {parent_id}")
             if parent.text[child_start : child_start + len(child_text)] != child_text:
-                raise ValueError(f"child text is not an exact parent substring: {parent_id}")
+                raise ValueError(
+                    f"child text is not an exact parent substring: {parent_id}"
+                )
             metadata = {
                 "parent_id": parent_id,
                 "parent_source_url": parent.source_url,
@@ -250,8 +252,7 @@ class ParentStore:
         _required_non_negative_int(metadata, "parent_start_index")
         parent_text_hash = _required_string(metadata, "parent_text_sha256")
         if len(parent_text_hash) != 64 or any(
-            character not in "0123456789abcdef"
-            for character in parent_text_hash
+            character not in "0123456789abcdef" for character in parent_text_hash
         ):
             raise ValueError(
                 "child parent_text_sha256 must be a 64-character lowercase hex"

@@ -219,16 +219,14 @@ def prepare_dataset(
         and pending_publication is not None
         and pending_publication["phase"] == "committed"
     ):
-        candidate_valid, _candidate_error = (
-            _validate_committed_publication_candidate(
-                config,
-                config_path=config_path,
-                root=root,
-                publication=pending_publication,
-                source_config=source_config,
-                processing_config=processing_config,
-                source_root=source_root,
-            )
+        candidate_valid, _candidate_error = _validate_committed_publication_candidate(
+            config,
+            config_path=config_path,
+            root=root,
+            publication=pending_publication,
+            source_config=source_config,
+            processing_config=processing_config,
+            source_root=source_root,
         )
         if candidate_valid:
             _complete_validated_committed_publication(
@@ -344,7 +342,9 @@ def prepare_dataset(
                 f"partial preparation staging exists; use --resume: {staging}"
             )
         if _read_json_object(staging / "prepare_state.json") != state:
-            raise RuntimeError("preparation staging does not match the requested settings")
+            raise RuntimeError(
+                "preparation staging does not match the requested settings"
+            )
     if existing is not None:
         _validate_existing_source_identity(
             existing,
@@ -361,11 +361,16 @@ def prepare_dataset(
             raise RuntimeError(
                 "legacy dataset cannot be upgraded in place; use a different data-root"
             )
-        if not staging.exists() and not refresh and not rebuild and _requested_artifacts_complete(
-            config,
-            root,
-            existing,
-            until=until,
+        if (
+            not staging.exists()
+            and not refresh
+            and not rebuild
+            and _requested_artifacts_complete(
+                config,
+                root,
+                existing,
+                until=until,
+            )
         ):
             _validate_processing_identity(
                 existing,
@@ -971,7 +976,9 @@ def _validate_managed_data_root(root: Path) -> None:
                 f"managed data-root directory must not be a symlink/junction: {relative}"
             )
         if path.exists() and not path.is_dir():
-            raise RuntimeError(f"managed data-root directory has the wrong type: {relative}")
+            raise RuntimeError(
+                f"managed data-root directory has the wrong type: {relative}"
+            )
     for relative in _MANAGED_FILES:
         path = root / relative
         if _is_link_like(path):
@@ -1023,8 +1030,7 @@ def _validate_existing_source_identity(
                 else "a different data-root"
             )
             raise RuntimeError(
-                "existing dataset was built from a different source config; "
-                f"use {hint}"
+                f"existing dataset was built from a different source config; use {hint}"
             )
         return
     if existing.site_config_sha256 != config.config_sha256 and not refresh:
@@ -1073,7 +1079,9 @@ def _requested_artifacts_complete(
         )
     if until in {"profile", "all"} and config.profile.prepare == "recommended-v2":
         required.extend(
-            profile_artifact_paths(runtime_profile("recommended-v2"), root).required_paths
+            profile_artifact_paths(
+                runtime_profile("recommended-v2"), root
+            ).required_paths
         )
     return all(path.is_file() for path in required)
 
@@ -1215,7 +1223,9 @@ def _validate_committed_source_bytes(
         if not archive.is_file():
             raise RuntimeError("committed pinned source archive is missing")
         if sha256_file(archive) != config.loader.archive_sha256:
-            raise RuntimeError("committed pinned source archive SHA-256 is inconsistent")
+            raise RuntimeError(
+                "committed pinned source archive SHA-256 is inconsistent"
+            )
         _validate_committed_archive_source(
             config,
             root=root,
@@ -1260,9 +1270,7 @@ def _validate_committed_source_bytes(
         validate_bounded_http_cache(
             root / "data/raw",
             expected_source_config_sha256=source_config,
-            expected_processing_config_sha256=str(
-                source["processing_config_sha256"]
-            ),
+            expected_processing_config_sha256=str(source["processing_config_sha256"]),
             expected_source_snapshot_sha256=expected_snapshot,
             expected_page_count=int(source["source_page_count"]),
         )
@@ -1356,7 +1364,9 @@ def _require_manifest_values(
 ) -> None:
     mismatched = [key for key, value in expected.items() if payload.get(key) != value]
     if mismatched:
-        raise RuntimeError(f"committed {label} is inconsistent: {', '.join(mismatched)}")
+        raise RuntimeError(
+            f"committed {label} is inconsistent: {', '.join(mismatched)}"
+        )
 
 
 def _json_compatible(value: Any) -> Any:
@@ -1764,17 +1774,15 @@ def _publish_derived_transaction(
     try:
         staging_relative = staging.resolve().relative_to(root.resolve()).as_posix()
     except ValueError as error:
-        raise RuntimeError("preparation staging must remain within the data-root") from error
+        raise RuntimeError(
+            "preparation staging must remain within the data-root"
+        ) from error
     backup_root = Path(
         tempfile.mkdtemp(dir=root, prefix=".prepare-publication-backup-")
     )
     entries = [
         {
-            "source": (
-                None
-                if source is None
-                else source.relative_to(root).as_posix()
-            ),
+            "source": (None if source is None else source.relative_to(root).as_posix()),
             "destination": destination.relative_to(root).as_posix(),
             "backup": (backup_root / str(index)).relative_to(root).as_posix(),
             "had_destination": destination.exists() or destination.is_symlink(),
@@ -1863,7 +1871,9 @@ def _rollback_derived_publication(root: Path, payload: dict[str, Any]) -> None:
         except BaseException as error:
             errors.append(error)
     if errors:
-        raise RuntimeError("one or more publication entries could not be restored") from errors[0]
+        raise RuntimeError(
+            "one or more publication entries could not be restored"
+        ) from errors[0]
     backup_root = root / str(payload["backup_root"])
     _remove_path(backup_root)
     (root / _PUBLICATION_JOURNAL_NAME).unlink(missing_ok=True)
@@ -1885,13 +1895,17 @@ def _rollback_publication_entry(root: Path, entry: dict[str, Any]) -> None:
                 os.rename(destination, source)
                 destination_exists = False
         elif destination_exists:
-            raise RuntimeError("publication destination conflicts with its retained backup")
+            raise RuntimeError(
+                "publication destination conflicts with its retained backup"
+            )
         destination.parent.mkdir(parents=True, exist_ok=True)
         os.rename(backup, destination)
         return
     if had_destination:
         if not destination_exists:
-            raise RuntimeError("committed artifact backup and destination are both missing")
+            raise RuntimeError(
+                "committed artifact backup and destination are both missing"
+            )
         if source is not None and not source_exists:
             raise RuntimeError("committed artifact backup is missing after publication")
         return
@@ -1975,7 +1989,9 @@ def _safe_publication_relative(root: Path, value: str, label: str) -> Path:
     if not value or "\\" in value:
         raise RuntimeError(f"{label} is invalid")
     relative = PurePosixPath(value)
-    if relative.is_absolute() or any(part in {"", ".", ".."} for part in relative.parts):
+    if relative.is_absolute() or any(
+        part in {"", ".", ".."} for part in relative.parts
+    ):
         raise RuntimeError(f"{label} is unsafe")
     if relative.as_posix() != value:
         raise RuntimeError(f"{label} is not normalized")

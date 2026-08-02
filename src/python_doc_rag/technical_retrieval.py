@@ -60,7 +60,9 @@ class SymbolArtifactSummary:
 
 def extract_identifiers(text: str) -> tuple[str, ...]:
     """Extract Python-shaped identifiers without changing dots or underscores."""
-    return tuple(dict.fromkeys(match.group() for match in _IDENTIFIER_PATTERN.finditer(text)))
+    return tuple(
+        dict.fromkeys(match.group() for match in _IDENTIFIER_PATTERN.finditer(text))
+    )
 
 
 def identifier_variants(identifier: str) -> tuple[str, ...]:
@@ -91,9 +93,7 @@ def symbol_record_for(chunk: SearchChunk) -> SymbolRecord:
     """Derive sidecar fields only from parser-produced chunk content."""
     parsed = urlsplit(chunk.source_url)
     url_text = unquote(f"{parsed.path} {parsed.fragment}")
-    fields = "\n".join(
-        (chunk.page_title, chunk.section_title, url_text, chunk.text)
-    )
+    fields = "\n".join((chunk.page_title, chunk.section_title, url_text, chunk.text))
     identifiers: list[str] = []
     for identifier in extract_identifiers(fields):
         identifiers.extend(identifier_variants(identifier))
@@ -299,9 +299,7 @@ class FieldBM25Retriever:
         """Return original chunks in field-local rank order."""
         return tuple(result.chunk for result in self.search(question, top_k=limit))
 
-    def _document_tokens(
-        self, position: int, chunk: SearchChunk
-    ) -> tuple[str, ...]:
+    def _document_tokens(self, position: int, chunk: SearchChunk) -> tuple[str, ...]:
         if self._field == "identifiers":
             return self._records[position].identifiers
         selector: Callable[[SearchChunk], str] = {

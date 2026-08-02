@@ -54,8 +54,7 @@ def main() -> int:
     data_root = _resolve_data_root(args.data_root)
     index_path = args.index_path or data_root / "indexes/python_3_13_ja.faiss"
     metadata_path = (
-        args.metadata_path
-        or data_root / "indexes/python_3_13_ja_metadata.jsonl"
+        args.metadata_path or data_root / "indexes/python_3_13_ja_metadata.jsonl"
     )
     manifest_path = (
         args.index_manifest_path
@@ -183,7 +182,6 @@ def _top_k(value: str) -> int:
     return parsed
 
 
-
 def _positive_int(value: str) -> int:
     try:
         parsed = int(value)
@@ -202,9 +200,7 @@ def _ngram_sizes(value: str) -> tuple[int, ...]:
             "ngram-sizes must be comma-separated integers"
         ) from error
     if not sizes or any(size < 1 for size in sizes):
-        raise argparse.ArgumentTypeError(
-            "ngram-sizes must contain positive integers"
-        )
+        raise argparse.ArgumentTypeError("ngram-sizes must contain positive integers")
     return sizes
 
 
@@ -219,6 +215,7 @@ def _default_output_path(data_root: Path, retriever: str) -> Path:
     except KeyError as error:
         raise ValueError(f"unsupported retriever: {retriever}") from error
     return data_root / "evaluation" / filename
+
 
 def _print_summary(report: Any, output_path: Path) -> None:
     print(f"Questions: {report.question_count}")

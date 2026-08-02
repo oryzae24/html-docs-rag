@@ -309,8 +309,7 @@ class RagService:
             ),
             total_seconds=total_seconds,
             input_tokens=sum(
-                int(getattr(metric, "input_tokens", 0))
-                for metric in generation_history
+                int(getattr(metric, "input_tokens", 0)) for metric in generation_history
             ),
             generated_tokens=sum(
                 int(getattr(metric, "generated_tokens", 0))
@@ -757,9 +756,7 @@ def _embedding_identity(
     document_prefix_value = baseline_manifest.get("document_prefix")
     trust_remote_code_value = baseline_manifest.get("trust_remote_code")
     query_prefix = "" if query_prefix_value is None else query_prefix_value
-    document_prefix = (
-        "" if document_prefix_value is None else document_prefix_value
-    )
+    document_prefix = "" if document_prefix_value is None else document_prefix_value
     trust_remote_code = (
         False if trust_remote_code_value is None else trust_remote_code_value
     )
@@ -769,9 +766,7 @@ def _embedding_identity(
         raise ArtifactValidationError("baseline manifest dimension is invalid")
     if normalized is not True:
         raise ArtifactValidationError("baseline embeddings must be normalized")
-    if revision is not None and (
-        not isinstance(revision, str) or not revision.strip()
-    ):
+    if revision is not None and (not isinstance(revision, str) or not revision.strip()):
         raise ArtifactValidationError("baseline model revision is invalid")
     if not isinstance(query_prefix, str) or not isinstance(document_prefix, str):
         raise ArtifactValidationError("baseline embedding prefixes are invalid")
@@ -797,8 +792,7 @@ def _shared_embedding_identity(
     mismatches = [plan.id for plan in plans[1:] if plan.embedding_identity != expected]
     if mismatches:
         raise ArtifactValidationError(
-            "knowledge base間でEmbedding仕様を共有できません: "
-            + ", ".join(mismatches)
+            "knowledge base間でEmbedding仕様を共有できません: " + ", ".join(mismatches)
         )
     return expected
 
@@ -1261,8 +1255,7 @@ def _compare_counts(
 ) -> None:
     if first is not None and second is not None and first != second:
         errors.append(
-            f"{first_label}と{second_label}の件数が一致しません: "
-            f"{first} != {second}"
+            f"{first_label}と{second_label}の件数が一致しません: {first} != {second}"
         )
 
 

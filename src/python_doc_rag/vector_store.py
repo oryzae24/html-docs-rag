@@ -172,7 +172,11 @@ def build_vector_index(
     """Encode a processed corpus and atomically persist FAISS index artifacts."""
     if not model_name.strip():
         raise ValueError("model_name must not be empty")
-    if isinstance(batch_size, bool) or not isinstance(batch_size, int) or batch_size < 1:
+    if (
+        isinstance(batch_size, bool)
+        or not isinstance(batch_size, int)
+        or batch_size < 1
+    ):
         raise ValueError("batch_size must be at least 1")
     _validate_distinct_paths(input_jsonl, index_path, metadata_path, manifest_path)
 
@@ -206,7 +210,10 @@ def build_vector_index(
                 raise ValueError("embedding model returned an invalid dimension")
             embedding_dimension = int(embeddings.shape[1])
             declared_dimension = _get_embedding_dimension(embedding_model)
-            if declared_dimension is not None and declared_dimension != embedding_dimension:
+            if (
+                declared_dimension is not None
+                and declared_dimension != embedding_dimension
+            ):
                 raise ValueError(
                     "embedding dimension does not match model declaration: "
                     f"{embedding_dimension} != {declared_dimension}"
@@ -392,7 +399,9 @@ def _import_faiss() -> Any:
     try:
         return importlib.import_module("faiss")
     except ImportError as error:
-        raise RuntimeError("faiss-cpu is required for vector index operations") from error
+        raise RuntimeError(
+            "faiss-cpu is required for vector index operations"
+        ) from error
 
 
 def _resolved_device(model: EmbeddingModelProtocol, requested: str | None) -> str:

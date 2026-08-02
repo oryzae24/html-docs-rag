@@ -11,9 +11,7 @@ from typing import Any, Literal
 from python_doc_rag.profiles import RuntimeProfile, runtime_profile
 
 SERVICE_CONFIG_REVISION = "multi-kb-service-v1"
-_TOP_LEVEL_KEYS = frozenset(
-    {"revision", "profile", "device", "knowledge_bases"}
-)
+_TOP_LEVEL_KEYS = frozenset({"revision", "profile", "device", "knowledge_bases"})
 _KNOWLEDGE_BASE_KEYS = frozenset({"id", "display_name", "data_root"})
 _KNOWLEDGE_BASE_ID_PATTERN = re.compile(r"[a-z0-9][a-z0-9_-]{0,63}")
 _DEVICES = frozenset({"auto", "cpu", "cuda"})
@@ -112,9 +110,7 @@ def _parse_knowledge_bases(
             "service config.knowledge_basesはTOML table arrayである必要があります。"
         )
     if not value:
-        raise ServiceConfigError(
-            "service config.knowledge_basesは1件以上必要です。"
-        )
+        raise ServiceConfigError("service config.knowledge_basesは1件以上必要です。")
 
     parsed: list[KnowledgeBaseConfig] = []
     seen_ids: set[str] = set()
@@ -145,8 +141,7 @@ def _parse_knowledge_bases(
         )
         if data_root in seen_roots:
             raise ServiceConfigError(
-                "knowledge base data_rootが重複しています: "
-                f"{knowledge_base_id!r}"
+                f"knowledge base data_rootが重複しています: {knowledge_base_id!r}"
             )
 
         seen_ids.add(knowledge_base_id)

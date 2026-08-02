@@ -156,7 +156,9 @@ class SearchChunk:
             category=data["category"],
             chunk_index=data["chunk_index"],
             start_index=data["start_index"],
-            extra_metadata={key: value for key, value in data.items() if key not in required},
+            extra_metadata={
+                key: value for key, value in data.items() if key not in required
+            },
         )
 
 

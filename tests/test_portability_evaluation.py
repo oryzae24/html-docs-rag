@@ -156,9 +156,7 @@ def test_portability_evaluation_continues_and_saves_each_case(
 def test_portability_summary_counts_false_answer_and_abstention() -> None:
     answered = CitedAnswer(
         answer_text="unsupported [S1]",
-        sources=(
-            CitationSource("S1", "Page", "Section", _chunk().source_url),
-        ),
+        sources=(CitationSource("S1", "Page", "Section", _chunk().source_url),),
         retrieved_chunks=(_chunk(),),
         generation_attempts=1,
     )

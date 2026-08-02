@@ -66,7 +66,7 @@ minimum_section_text_length = {parser_minimum}"""
     elif loader == "pinned-local-archive":
         loader_table = f"""type = "pinned-local-archive"
 archive_path = "fixture.zip"
-archive_sha256 = "{'a' * 64}"
+archive_sha256 = "{"a" * 64}"
 archive_format = "zip"
 archive_root = "python-docs-html"
 original_archive_url = "https://example.com/python-docs.zip"
@@ -216,7 +216,9 @@ class _FixtureLoader:
         document = _document()
         if self.replace_manifest_on_load:
             manifest = self.runtime.data_root / "data/raw/fetch_manifest.json"
-            self.previous_manifest = manifest.read_bytes() if manifest.is_file() else None
+            self.previous_manifest = (
+                manifest.read_bytes() if manifest.is_file() else None
+            )
             manifest.parent.mkdir(parents=True, exist_ok=True)
             manifest.write_text('{"candidate": true}\n', encoding="utf-8")
         elif self.loader_type == "bounded-http":
@@ -377,7 +379,9 @@ def test_completed_snapshot_dataset_strictly_validates_source_lock(
     monkeypatch.setattr(
         preparation,
         "build_document_loader",
-        lambda settings, runtime: pytest.fail("fast validation must not build a loader"),
+        lambda settings, runtime: pytest.fail(
+            "fast validation must not build a loader"
+        ),
     )
 
     with pytest.raises(RuntimeError, match="source lock"):
@@ -860,8 +864,7 @@ def test_preparation_does_not_import_or_construct_python_parser_directly() -> No
     names = {node.id for node in ast.walk(tree) if isinstance(node, ast.Name)}
 
     assert not any(
-        name.startswith("python_doc_rag.sites.python_docs")
-        for name in imported_modules
+        name.startswith("python_doc_rag.sites.python_docs") for name in imported_modules
     )
     assert "PythonSphinxHtmlParserAdapter" not in names
 
@@ -1134,7 +1137,9 @@ def test_commit_marker_interrupt_and_partial_rollback_remain_recoverable(
             raise OSError("injected index restore failure")
         real_rename(source, destination)
 
-    monkeypatch.setattr(preparation, "_write_json_atomic", interrupt_after_commit_marker)
+    monkeypatch.setattr(
+        preparation, "_write_json_atomic", interrupt_after_commit_marker
+    )
     monkeypatch.setattr(preparation.os, "rename", fail_one_index_restore)
 
     with pytest.raises(RuntimeError, match="rollback was incomplete"):

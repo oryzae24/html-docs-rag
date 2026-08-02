@@ -149,7 +149,9 @@ def _generic_page_title(
 
 def _generic_block_text(element: Tag) -> str:
     if element.name == "pre":
-        lines = [line.rstrip() for line in element.get_text("", strip=False).splitlines()]
+        lines = [
+            line.rstrip() for line in element.get_text("", strip=False).splitlines()
+        ]
         return "\n".join(lines).strip()
     if element.name == "table":
         rows: list[str] = []
@@ -225,7 +227,13 @@ def _deduplicate_anchor(value: str, anchors: dict[str, int]) -> str:
 def _source_url_with_anchor(source_url: str, anchor: str) -> str:
     parsed = urlsplit(source_url)
     return urlunsplit(
-        (parsed.scheme, parsed.netloc, parsed.path, parsed.query, quote(anchor, safe="-._~"))
+        (
+            parsed.scheme,
+            parsed.netloc,
+            parsed.path,
+            parsed.query,
+            quote(anchor, safe="-._~"),
+        )
     )
 
 

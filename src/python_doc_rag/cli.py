@@ -97,9 +97,7 @@ def build_parser() -> argparse.ArgumentParser:
     """Create the argparse command tree without importing heavy dependencies."""
     parser = argparse.ArgumentParser(
         prog="python -m python_doc_rag",
-        description=(
-            "準備済みのローカル文書datasetを検索し、出典付きで回答します。"
-        ),
+        description=("準備済みのローカル文書datasetを検索し、出典付きで回答します。"),
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -115,9 +113,7 @@ def build_parser() -> argparse.ArgumentParser:
     chat_parser = subparsers.add_parser(
         "chat",
         help="同じモデルとindexで複数の質問へ回答する",
-        description=(
-            "モデルとindexを1回ロードし、独立した複数の質問を受け付けます。"
-        ),
+        description=("モデルとindexを1回ロードし、独立した複数の質問を受け付けます。"),
     )
     _add_generation_arguments(chat_parser)
     chat_parser.set_defaults(handler=_run_chat)
@@ -258,9 +254,7 @@ def main(argv: list[str] | None = None) -> int:
         if getattr(args, "handler", None) is _run_serve:
             detail_hint = "\n詳細は --log-level debug で確認してください。"
         elif hasattr(args, "debug"):
-            detail_hint = (
-                "\n詳細を確認するには --debug を付けて再実行してください。"
-            )
+            detail_hint = "\n詳細を確認するには --debug を付けて再実行してください。"
         else:
             detail_hint = ""
         print(
@@ -424,19 +418,13 @@ def _add_generation_arguments(parser: argparse.ArgumentParser) -> None:
         "--max-input-tokens",
         type=_positive_integer,
         default=_DEFAULT_GENERATION_CONFIG.max_prompt_tokens,
-        help=(
-            "入力token上限"
-            f"（既定: {_DEFAULT_GENERATION_CONFIG.max_prompt_tokens}）"
-        ),
+        help=(f"入力token上限（既定: {_DEFAULT_GENERATION_CONFIG.max_prompt_tokens}）"),
     )
     parser.add_argument(
         "--max-new-tokens",
         type=_positive_integer,
         default=_DEFAULT_GENERATION_CONFIG.max_new_tokens,
-        help=(
-            "生成token上限"
-            f"（既定: {_DEFAULT_GENERATION_CONFIG.max_new_tokens}）"
-        ),
+        help=(f"生成token上限（既定: {_DEFAULT_GENERATION_CONFIG.max_new_tokens}）"),
     )
     parser.add_argument(
         "--debug",
@@ -604,10 +592,7 @@ def _run_prepare(args: argparse.Namespace) -> int:
     if result.dense_index_result is not None:
         print(f"dense index: {result.dense_index_result.index_path}")
     if result.profile_result is not None:
-        print(
-            "recommended-v2 artifact再利用: "
-            f"{result.profile_result.reused_existing}"
-        )
+        print(f"recommended-v2 artifact再利用: {result.profile_result.reused_existing}")
     return 0
 
 
@@ -884,8 +869,7 @@ def _compare_counts(
 ) -> None:
     if first is not None and second is not None and first != second:
         errors.append(
-            f"{first_label}と{second_label}の件数が一致しません: "
-            f"{first} != {second}"
+            f"{first_label}と{second_label}の件数が一致しません: {first} != {second}"
         )
 
 

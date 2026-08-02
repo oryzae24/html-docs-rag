@@ -440,9 +440,7 @@ class RagCaseRecord:
             ),
             "child_search_hit_count": self.child_search_hit_count,
             "unique_parent_candidate_count": self.unique_parent_candidate_count,
-            "maximum_children_for_one_parent": (
-                self.maximum_children_for_one_parent
-            ),
+            "maximum_children_for_one_parent": (self.maximum_children_for_one_parent),
             "error": self.error,
         }
 
@@ -691,13 +689,13 @@ def summarize_rag_records(records: Sequence[RagCaseRecord]) -> dict[str, Any]:
         for record in completed
         if record.derived_result is not None
     ]
-    contract_attempted = [record for record in records if record.generation_attempts > 0]
+    contract_attempted = [
+        record for record in records if record.generation_attempts > 0
+    ]
     retrieval_times = [record.retrieval_seconds for record in records]
     generation_times = [record.generation_seconds for record in records]
     total_times = [record.total_seconds for record in records]
-    selected_context_counts = [
-        record.selected_context_count for record in records
-    ]
+    selected_context_counts = [record.selected_context_count for record in records]
     prompt_token_counts = [
         record.prompt_token_counts[0]
         for record in records
@@ -774,9 +772,7 @@ def summarize_rag_records(records: Sequence[RagCaseRecord]) -> dict[str, Any]:
             record.generation_succeeded and record.generation_attempts == 1
             for record in contract_attempted
         ),
-        "retry_used_count": sum(
-            record.generation_attempts == 2 for record in records
-        ),
+        "retry_used_count": sum(record.generation_attempts == 2 for record in records),
         "retry_used_rate": _rate(
             record.generation_attempts == 2 for record in contract_attempted
         ),
@@ -797,7 +793,8 @@ def summarize_rag_records(records: Sequence[RagCaseRecord]) -> dict[str, Any]:
         ),
         "abstain_count": sum(record.abstained for record in records),
         "abstain_source_display_count": sum(
-            record.abstained and bool(record.displayed_source_urls) for record in records
+            record.abstained and bool(record.displayed_source_urls)
+            for record in records
         ),
         "abstain_answer_text_count": sum(
             record.abstained and bool(record.answer_text) for record in records
@@ -805,7 +802,9 @@ def summarize_rag_records(records: Sequence[RagCaseRecord]) -> dict[str, Any]:
         "average_retrieval_seconds": _float_mean(retrieval_times),
         "median_retrieval_seconds": median(retrieval_times) if retrieval_times else 0.0,
         "average_generation_seconds": _float_mean(generation_times),
-        "median_generation_seconds": median(generation_times) if generation_times else 0.0,
+        "median_generation_seconds": median(generation_times)
+        if generation_times
+        else 0.0,
         "average_total_seconds": _float_mean(total_times),
         "median_total_seconds": median(total_times) if total_times else 0.0,
         "average_selected_context_count": _float_mean(selected_context_counts),
@@ -813,9 +812,7 @@ def summarize_rag_records(records: Sequence[RagCaseRecord]) -> dict[str, Any]:
         "median_prompt_tokens": (
             median(prompt_token_counts) if prompt_token_counts else 0.0
         ),
-        "average_selected_context_characters": _float_mean(
-            selected_context_characters
-        ),
+        "average_selected_context_characters": _float_mean(selected_context_characters),
         "context_budget_excluded_count": sum(
             record.context_budget_excluded_count for record in records
         ),
@@ -1139,8 +1136,7 @@ def _pipeline_context_fields(pipeline: Any) -> dict[str, Any]:
     return {
         "selected_context_count": len(selected),
         "prompt_token_counts": tuple(
-            int(value)
-            for value in getattr(pipeline, "last_prompt_token_counts", ())
+            int(value) for value in getattr(pipeline, "last_prompt_token_counts", ())
         ),
         "selected_context_characters": sum(len(chunk.text) for chunk in selected),
         "context_budget_excluded_count": max(0, len(retrieved) - len(selected)),
@@ -1164,6 +1160,7 @@ def _parent_trace_fields(trace: RecordingRetriever) -> dict[str, int]:
             parent_trace.maximum_children_for_one_parent
         ),
     }
+
 
 def _question_record_fields(question: EvaluationCaseQuestion) -> dict[str, Any]:
     return {

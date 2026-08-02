@@ -30,7 +30,9 @@ def test_frozen_snapshot_reproduces_protected_corpus(tmp_path: Path) -> None:
         json.loads(line)["source_url"]
         for line in chunks.read_text(encoding="utf-8").splitlines()
     ]
-    assert all(url.startswith("https://docs.python.org/ja/3.13/") for url in source_urls)
+    assert all(
+        url.startswith("https://docs.python.org/ja/3.13/") for url in source_urls
+    )
     assert all("/workspace/" not in url and "file://" not in url for url in source_urls)
 
     reused = prepare_dataset(config, data_root, until="corpus", device="cpu")

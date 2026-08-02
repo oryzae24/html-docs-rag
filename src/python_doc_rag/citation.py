@@ -76,8 +76,12 @@ def validate_citations(
     search_results: Sequence[SearchChunk],
 ) -> CitationValidation:
     """Resolve [S1] references by search-result position and detect invalid ones."""
-    numbers = _unique_in_order(int(match) for match in _CITATION_PATTERN.findall(answer))
-    valid_numbers = tuple(number for number in numbers if 1 <= number <= len(search_results))
+    numbers = _unique_in_order(
+        int(match) for match in _CITATION_PATTERN.findall(answer)
+    )
+    valid_numbers = tuple(
+        number for number in numbers if 1 <= number <= len(search_results)
+    )
     invalid_numbers = tuple(number for number in numbers if number not in valid_numbers)
 
     sources: list[CitationSource] = []

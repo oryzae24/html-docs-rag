@@ -145,9 +145,7 @@ def test_url_normalization_rejects_invalid_scheme_traversal_and_auth(
 
 
 def test_crawl_scope_supports_multiple_origins_and_prefix_union() -> None:
-    scope = CrawlScope(
-        ("https://example.com/docs/", "https://other.example/guide/")
-    )
+    scope = CrawlScope(("https://example.com/docs/", "https://other.example/guide/"))
 
     assert scope.resolve("https://example.com/docs/", "page/") == (
         "https://example.com/docs/page/"
@@ -196,7 +194,11 @@ def test_http_loader_uses_deterministic_bfs_and_never_fetches_external(
 
     documents = loader.load()
 
-    assert [item.source_url for item in documents] == [start, f"{start}a/", f"{start}b/"]
+    assert [item.source_url for item in documents] == [
+        start,
+        f"{start}a/",
+        f"{start}b/",
+    ]
     assert transport.calls == [robots_url, start, f"{start}a/", f"{start}b/"]
     assert "https://external.test/x/" not in transport.calls
     assert loader.summary is not None
@@ -228,14 +230,14 @@ def test_http_loader_resume_reuses_valid_staged_page(
     }
     (staging / "fetch_manifest.json").write_text(
         json.dumps(
-                {
-                    "schema_revision": "bounded-http-fetch-v2",
-                    "complete": False,
-                    "source_config_sha256": source_config_sha256(
-                        _settings(),
-                        category="fixture",
-                    ),
-                    "start_urls": [start],
+            {
+                "schema_revision": "bounded-http-fetch-v2",
+                "complete": False,
+                "source_config_sha256": source_config_sha256(
+                    _settings(),
+                    category="fixture",
+                ),
+                "start_urls": [start],
                 "pages": [record],
                 "failures": [],
             }
@@ -415,7 +417,10 @@ def test_http_loader_skips_non_html_content(
         tmp_path / content_type.replace("/", "-"),
         category="fixture",
         transport=FakeTransport(
-            {robots_url: robots, start: _response(start, "x", content_type=content_type)}
+            {
+                robots_url: robots,
+                start: _response(start, "x", content_type=content_type),
+            }
         ),
         sleep=lambda value: None,
     )
@@ -434,7 +439,9 @@ def test_http_loader_rejects_external_redirect(tmp_path: Path) -> None:
         transport=FakeTransport(
             {
                 robots_url: robots,
-                start: _response(start, "<html></html>", final_url="https://evil.test/"),
+                start: _response(
+                    start, "<html></html>", final_url="https://evil.test/"
+                ),
             }
         ),
         sleep=lambda value: None,
@@ -451,7 +458,9 @@ def test_http_loader_deduplicates_canonical_and_records_content_duplicates(
     a = f"{start}a/"
     b = f"{start}b/"
     robots_url, robots = _robots("https://example.com")
-    common = "<html><head><link rel='canonical' href='../a/'></head><body>same</body></html>"
+    common = (
+        "<html><head><link rel='canonical' href='../a/'></head><body>same</body></html>"
+    )
     loader = BoundedHttpHtmlLoader(
         _settings(),
         tmp_path / "raw",
@@ -479,7 +488,10 @@ def test_http_loader_reuses_cache_and_supports_offline_replay(tmp_path: Path) ->
     robots_url, robots = _robots("https://example.com")
     cache = tmp_path / "raw"
     first_transport = FakeTransport(
-        {robots_url: robots, start: _response(start, "<html><body>cached</body></html>")}
+        {
+            robots_url: robots,
+            start: _response(start, "<html><body>cached</body></html>"),
+        }
     )
     first = BoundedHttpHtmlLoader(
         _settings(),
@@ -764,7 +776,10 @@ def test_generic_parser_selector_priority_exclusion_and_structure() -> None:
 
     result = GenericHtmlParser(_parser_settings()).parse(_document(html))
 
-    assert [item.section_title for item in result.sections] == ["Article title", "Usage"]
+    assert [item.section_title for item in result.sections] == [
+        "Article title",
+        "Usage",
+    ]
     assert result.sections[0].source_url.endswith("#intro")
     assert "uv sync --frozen" in result.sections[0].text
     assert "uv run --\n  python" in result.sections[1].text

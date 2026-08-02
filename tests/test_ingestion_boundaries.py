@@ -141,13 +141,11 @@ def _manifest() -> DatasetManifest:
 def test_source_document_hash_identity_and_immutable_json_metadata() -> None:
     document = _source_document()
 
-    assert document.content_sha256 == hashlib.sha256(
-        document.content.encode()
-    ).hexdigest()
+    assert (
+        document.content_sha256 == hashlib.sha256(document.content.encode()).hexdigest()
+    )
     assert document.canonical_url == document.source_url
-    assert document.to_dict()["metadata"] == {
-        "nested": {"values": [1, True, None]}
-    }
+    assert document.to_dict()["metadata"] == {"nested": {"values": [1, True, None]}}
     with pytest.raises(TypeError):
         document.metadata["new"] = "value"  # type: ignore[index]
     nested = document.metadata["nested"]
@@ -205,13 +203,16 @@ def test_local_loader_does_not_follow_symlinks(tmp_path: Path) -> None:
     category.mkdir()
     (category / "unsafe.html").symlink_to(target)
 
-    assert list(
-        LocalHtmlTreeLoader(
-            tmp_path,
-            source_base_url="https://docs.python.org/ja/3.13/",
-            include_path_prefixes=("tutorial/",),
-        ).load()
-    ) == []
+    assert (
+        list(
+            LocalHtmlTreeLoader(
+                tmp_path,
+                source_base_url="https://docs.python.org/ja/3.13/",
+                include_path_prefixes=("tutorial/",),
+            ).load()
+        )
+        == []
+    )
 
 
 @pytest.mark.parametrize(
@@ -297,9 +298,13 @@ def test_http_site_config_supports_multiple_urls_and_origins(tmp_path: Path) -> 
         ('slug = "example-docs"', 'slug = "../unsafe"', "kebab-case"),
         ("request_delay_seconds = 0.5", "request_delay_seconds = -1", "negative"),
         ("max_pages = 40", "max_pages = 201", "must not exceed"),
-        ('content_selectors = ["article", "main"]', 'content_selectors = ["["]', "selector"),
+        (
+            'content_selectors = ["article", "main"]',
+            'content_selectors = ["["]',
+            "selector",
+        ),
         ("chunk_overlap = 150", "chunk_overlap = 1000", "smaller"),
-        ('https://example.com/docs/', 'ftp://example.com/docs/', "HTTP"),
+        ("https://example.com/docs/", "ftp://example.com/docs/", "HTTP"),
     ],
 )
 def test_site_config_rejects_unsafe_or_invalid_values(

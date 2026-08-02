@@ -101,9 +101,7 @@ class FakePipeline:
     def answer(self, question: str) -> CitedAnswer:
         self.questions.append(question)
         self.retriever.retrieve(question, limit=5)
-        self.generator.generation_history.append(
-            SimpleNamespace(elapsed_seconds=0.25)
-        )
+        self.generator.generation_history.append(SimpleNamespace(elapsed_seconds=0.25))
         return _answer(question)
 
 
@@ -290,12 +288,8 @@ def test_generation_commands_accept_hybrid_retrieval(command: str) -> None:
 @pytest.mark.parametrize("command", ["ask", "chat"])
 def test_versioned_recommended_profiles_preserve_default(command: str) -> None:
     default_args = build_parser().parse_args([command])
-    recommended_v1 = build_parser().parse_args(
-        [command, "--profile", "recommended-v1"]
-    )
-    recommended_v2 = build_parser().parse_args(
-        [command, "--profile", "recommended-v2"]
-    )
+    recommended_v1 = build_parser().parse_args([command, "--profile", "recommended-v1"])
+    recommended_v2 = build_parser().parse_args([command, "--profile", "recommended-v2"])
     recommended = build_parser().parse_args([command, "--profile", "recommended"])
 
     cli._apply_runtime_profile(default_args)
@@ -307,18 +301,14 @@ def test_versioned_recommended_profiles_preserve_default(command: str) -> None:
     assert default_args.answer_mode == "legacy"
     assert default_args.reranker_model_key is None
     assert recommended_v1.retriever == "hybrid"
-    assert recommended_v1.model_revision == (
-        "cdbee75f17c01a7cc42f958dc650907174af0554"
-    )
+    assert recommended_v1.model_revision == ("cdbee75f17c01a7cc42f958dc650907174af0554")
     assert recommended_v2.retriever == "technical-field"
     assert recommended_v2.embedding_model_key == "bge-m3"
     assert recommended_v2.field_candidate_k == 30
     assert recommended.answer_mode == "answer-or-abstain"
     assert recommended.reranker_model_key == "mmarco-minilm"
     assert recommended.reranker_candidate_k == 30
-    assert recommended.model_revision == (
-        "b968826d9c46dd6066d109eabc6255188de91218"
-    )
+    assert recommended.model_revision == ("b968826d9c46dd6066d109eabc6255188de91218")
     assert recommended.generator_model_key == "qwen3-8b"
 
 
@@ -338,9 +328,7 @@ def test_profile_command_prints_pinned_recommended_contents(
     )
     assert payload["generation_model"] == "Qwen/Qwen3-8B"
     assert payload["generation_template_options"] == {"enable_thinking": False}
-    assert payload["reranker_model"] == (
-        "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
-    )
+    assert payload["reranker_model"] == ("cross-encoder/mmarco-mMiniLMv2-L12-H384-v1")
     assert payload["reranker_model_revision"] == (
         "1427fd652930e4ba29e8149678df786c240d8825"
     )
@@ -432,9 +420,7 @@ def test_ask_rejects_blank_question_before_loading_models(
         lambda args, root: pytest.fail("models must not load for a blank question"),
     )
 
-    exit_code = main(
-        ["ask", "--data-root", str(data_root), "--question", " \n "]
-    )
+    exit_code = main(["ask", "--data-root", str(data_root), "--question", " \n "])
 
     assert exit_code == 1
     assert "質問を空にすることはできません" in capsys.readouterr().err
@@ -897,9 +883,7 @@ import python_doc_rag
 
 
 def test_serve_defaults_to_one_implicit_worker_and_safe_host() -> None:
-    args = build_parser().parse_args(
-        ["serve", "--service-config", "service.toml"]
-    )
+    args = build_parser().parse_args(["serve", "--service-config", "service.toml"])
 
     assert args.host == "127.0.0.1"
     assert args.port == 8000
@@ -1018,9 +1002,7 @@ def test_answer_mode_defaults_to_legacy_and_is_available_only_for_generation() -
     for command in ("ask", "chat"):
         args = parser.parse_args([command])
         assert args.answer_mode == "legacy"
-        selected = parser.parse_args(
-            [command, "--answer-mode", "answer-or-abstain"]
-        )
+        selected = parser.parse_args([command, "--answer-mode", "answer-or-abstain"])
         assert selected.answer_mode == "answer-or-abstain"
     check = parser.parse_args(["check"])
     assert not hasattr(check, "answer_mode")

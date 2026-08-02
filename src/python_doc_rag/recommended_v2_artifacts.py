@@ -27,9 +27,7 @@ from python_doc_rag.technical_retrieval import write_symbol_sidecar_atomic
 from python_doc_rag.vector_store import build_vector_index, load_chunks_jsonl
 
 RECOMMENDED_V2_EXPECTED_CHUNK_COUNT = 8_677
-BASELINE_METADATA_RELATIVE_PATH = Path(
-    "indexes/python_3_13_ja_metadata.jsonl"
-)
+BASELINE_METADATA_RELATIVE_PATH = Path("indexes/python_3_13_ja_metadata.jsonl")
 _PROTECTED_BASELINE_RELATIVE_PATHS = (
     Path("data/processed/python_3_13_ja_chunks.jsonl"),
     Path("indexes/python_3_13_ja.faiss"),
@@ -182,7 +180,9 @@ def prepare_dataset_recommended_v2_artifacts(
         if build_result.chunk_count != dataset.chunk_count:
             raise ArtifactPreparationError("built profile index count is inconsistent")
         if build_result.embedding_dimension != spec.embedding_dimension:
-            raise ArtifactPreparationError("built profile index dimension is inconsistent")
+            raise ArtifactPreparationError(
+                "built profile index dimension is inconsistent"
+            )
         _record_reproducible_manifest(
             staged_manifest,
             spec=spec,
@@ -258,7 +258,11 @@ def prepare_recommended_v2_artifacts(
         raise ArtifactPreparationError(
             "artifact準備はrecommended-v2 profileだけを対象とします。"
         )
-    if isinstance(batch_size, bool) or not isinstance(batch_size, int) or batch_size < 1:
+    if (
+        isinstance(batch_size, bool)
+        or not isinstance(batch_size, int)
+        or batch_size < 1
+    ):
         raise ValueError("batch_size must be at least 1")
 
     root = data_root.expanduser().resolve()
@@ -412,8 +416,7 @@ def _validate_output_scope(
         relative = safe_profile_relative_path(value, "required artifact")
         if not relative.is_relative_to(phase_relative):
             raise ArtifactPreparationError(
-                "recommended-v2 required artifactが単一のatomic公開範囲外です: "
-                f"{value}"
+                f"recommended-v2 required artifactが単一のatomic公開範囲外です: {value}"
             )
 
 

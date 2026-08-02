@@ -17,7 +17,9 @@ def _service_toml(
     device: object = "cuda",
     knowledge_bases: str | None = None,
 ) -> str:
-    rows = knowledge_bases or """
+    rows = (
+        knowledge_bases
+        or """
 [[knowledge_bases]]
 id = "python-docs"
 display_name = "Python documentation"
@@ -28,6 +30,7 @@ id = "uv-docs"
 display_name = "uv Documentation"
 data_root = "data/uv"
 """
+    )
     return (
         f"revision = {_toml_value(revision)}\n"
         f"profile = {_toml_value(profile)}\n"
@@ -74,12 +77,10 @@ def test_resolves_relative_data_roots_from_config_directory(tmp_path: Path) -> N
 
     config = load_service_config(path)
 
-    assert config.knowledge_bases[0].data_root == (
-        path.parent / "data/python"
-    ).resolve()
-    assert config.knowledge_bases[1].data_root == (
-        path.parent / "data/uv"
-    ).resolve()
+    assert (
+        config.knowledge_bases[0].data_root == (path.parent / "data/python").resolve()
+    )
+    assert config.knowledge_bases[1].data_root == (path.parent / "data/uv").resolve()
 
 
 def test_accepts_absolute_root_and_expands_home(tmp_path: Path) -> None:
@@ -101,9 +102,10 @@ data_root = "~/knowledge-base-fixture"
     )
 
     assert config.knowledge_bases[0].data_root == absolute
-    assert config.knowledge_bases[1].data_root == Path(
-        "~/knowledge-base-fixture"
-    ).expanduser().resolve()
+    assert (
+        config.knowledge_bases[1].data_root
+        == Path("~/knowledge-base-fixture").expanduser().resolve()
+    )
 
 
 def test_accepts_every_existing_runtime_profile_and_device(tmp_path: Path) -> None:

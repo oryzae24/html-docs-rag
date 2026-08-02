@@ -87,9 +87,7 @@ def _recommended_v1(name: str, *, alias_of: str | None = None) -> RuntimeProfile
         output_constraint_revision="answer-or-abstain-v1",
         generation_model_key="baseline-qwen3-4b",
         generation_model="Qwen/Qwen3-4B-Instruct-2507",
-        generation_model_revision=(
-            "cdbee75f17c01a7cc42f958dc650907174af0554"
-        ),
+        generation_model_revision=("cdbee75f17c01a7cc42f958dc650907174af0554"),
         dtype="bfloat16",
         top_k=5,
         max_input_tokens=8192,
@@ -134,9 +132,7 @@ def _recommended_v2(name: str, *, alias_of: str | None = None) -> RuntimeProfile
         output_constraint_revision="answer-or-abstain-v1",
         generation_model_key="qwen3-8b",
         generation_model="Qwen/Qwen3-8B",
-        generation_model_revision=(
-            "b968826d9c46dd6066d109eabc6255188de91218"
-        ),
+        generation_model_revision=("b968826d9c46dd6066d109eabc6255188de91218"),
         dtype="bfloat16",
         top_k=5,
         max_input_tokens=8192,

@@ -169,7 +169,9 @@ def test_context_resolver_uses_full_section_when_it_fits(tmp_path: Path) -> None
 def test_context_resolver_uses_matched_paragraph_window_and_hides_metadata(
     tmp_path: Path,
 ) -> None:
-    original_text = "前の段落" * 20 + "\n\n" + "一致する段落" * 10 + "\n\n" + "後の段落" * 20
+    original_text = (
+        "前の段落" * 20 + "\n\n" + "一致する段落" * 10 + "\n\n" + "後の段落" * 20
+    )
     item = section("window", text=original_text)
     candidate = _parent_candidate(item, tmp_path, child_index=4)
     matched_start = int(candidate.extra_metadata["matched_child_start"])

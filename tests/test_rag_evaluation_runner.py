@@ -7,10 +7,7 @@ import pytest
 
 
 def _load_runner() -> ModuleType:
-    path = (
-        Path(__file__).resolve().parents[1]
-        / "scripts/run_rag_quality_evaluation.py"
-    )
+    path = Path(__file__).resolve().parents[1] / "scripts/run_rag_quality_evaluation.py"
     spec = importlib.util.spec_from_file_location("rag_evaluation_runner", path)
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)

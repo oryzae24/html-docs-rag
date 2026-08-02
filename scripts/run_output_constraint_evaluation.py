@@ -169,8 +169,7 @@ def main() -> int:
             {
                 "id": evaluated[-1].id,
                 "status_choice": pipeline.last_status_choice,
-                "generation_calls": generation_call_count
-                - previous_generation_calls,
+                "generation_calls": generation_call_count - previous_generation_calls,
                 "prompt_token_counts": list(pipeline.last_prompt_token_counts),
             }
         )
@@ -207,9 +206,7 @@ def main() -> int:
             ),
             "generation_call_count": len(history),
             "generation_input_tokens": sum(item.input_tokens for item in history),
-            "generation_output_tokens": sum(
-                item.generated_tokens for item in history
-            ),
+            "generation_output_tokens": sum(item.generated_tokens for item in history),
             "frozen_retriever_call_count": retriever.calls,
         }
     )

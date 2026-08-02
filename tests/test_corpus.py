@@ -49,7 +49,9 @@ def test_enumeration_selects_categories_in_fixed_order(tmp_path: Path) -> None:
 
     first = enumerate_html_files(root)
     second = enumerate_html_files(root)
-    relative_paths = [path.relative_to(first.document_root).as_posix() for path in first.files]
+    relative_paths = [
+        path.relative_to(first.document_root).as_posix() for path in first.files
+    ]
 
     assert relative_paths == [
         "library/b.html",
@@ -90,9 +92,7 @@ def test_enumeration_does_not_follow_symlinks_outside_root(tmp_path: Path) -> No
         outside,
         target_is_directory=True,
     )
-    (root / "tutorial" / "external-file.html").symlink_to(
-        outside / "escaped.html"
-    )
+    (root / "tutorial" / "external-file.html").symlink_to(outside / "escaped.html")
 
     enumeration = enumerate_html_files(root)
     relative_paths = [

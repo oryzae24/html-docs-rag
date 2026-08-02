@@ -316,11 +316,15 @@ def _read_stable_source_file(entry: _SourceEntry) -> bytes:
     try:
         descriptor = os.open(entry.path, flags)
     except OSError as error:
-        raise ValueError(f"source file changed during snapshot: {entry.relative_name}") from error
+        raise ValueError(
+            f"source file changed during snapshot: {entry.relative_name}"
+        ) from error
     with os.fdopen(descriptor, "rb") as source:
         before = os.fstat(source.fileno())
         if not _same_source_identity(entry, before):
-            raise ValueError(f"source file changed during snapshot: {entry.relative_name}")
+            raise ValueError(
+                f"source file changed during snapshot: {entry.relative_name}"
+            )
         content = source.read()
         after = os.fstat(source.fileno())
     if not _same_source_identity(entry, after) or len(content) != entry.byte_size:

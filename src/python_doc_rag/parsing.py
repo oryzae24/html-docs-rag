@@ -20,6 +20,7 @@ def __getattr__(name: str) -> object:
         return PythonSphinxHtmlParserAdapter
     raise AttributeError(name)
 
+
 __all__ = [
     "DocumentParseResult",
     "GenericHtmlParser",

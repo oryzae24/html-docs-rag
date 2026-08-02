@@ -75,10 +75,7 @@ class TransformersPromptEncoder:
             add_special_tokens=add_special_tokens,
             truncation=truncation,
         )
-        inputs = {
-            name: tensor.to(self._device)
-            for name, tensor in encoded.items()
-        }
+        inputs = {name: tensor.to(self._device) for name, tensor in encoded.items()}
         self._cached_key = (prompt, add_special_tokens, truncation)
         self._cached_inputs = inputs
         return inputs

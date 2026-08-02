@@ -37,7 +37,9 @@ class DummyEmbeddingModel:
     ) -> NDArray[np.float32]:
         del batch_size, convert_to_numpy, show_progress_bar
         self.calls.append(tuple(sentences))
-        vectors = np.asarray([self._vector(text) for text in sentences], dtype=np.float32)
+        vectors = np.asarray(
+            [self._vector(text) for text in sentences], dtype=np.float32
+        )
         if normalize_embeddings:
             vectors /= np.linalg.norm(vectors, axis=1, keepdims=True)
         return vectors

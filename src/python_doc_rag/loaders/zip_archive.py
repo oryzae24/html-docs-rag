@@ -466,7 +466,9 @@ class SafeZipHtmlLoader:
                     _ensure_no_symlink_ancestors(staging, target.parent)
                     if is_directory:
                         target.mkdir(parents=True, exist_ok=True)
-                        records.append({"path": relative.as_posix(), "kind": "directory"})
+                        records.append(
+                            {"path": relative.as_posix(), "kind": "directory"}
+                        )
                         continue
                     target.parent.mkdir(parents=True, exist_ok=True)
                     digest = hashlib.sha256()
@@ -481,7 +483,9 @@ class SafeZipHtmlLoader:
                             if written > self._max_member_bytes:
                                 raise ValueError("ZIP member exceeded max_member_bytes")
                             if extracted_total > self._max_extracted_bytes:
-                                raise ValueError("ZIP content exceeded max_extracted_bytes")
+                                raise ValueError(
+                                    "ZIP content exceeded max_extracted_bytes"
+                                )
                             output.write(block)
                             digest.update(block)
                     if written != info.file_size:
@@ -500,9 +504,13 @@ class SafeZipHtmlLoader:
                 expected_sha256=self._archive_sha256,
                 max_bytes=self._max_archive_bytes,
             )
-            archive_root_path = staging.joinpath(*PurePosixPath(self._archive_root).parts)
+            archive_root_path = staging.joinpath(
+                *PurePosixPath(self._archive_root).parts
+            )
             if not archive_root_path.is_dir() or _is_link_like(archive_root_path):
-                raise ValueError(f"configured archive_root is absent: {self._archive_root}")
+                raise ValueError(
+                    f"configured archive_root is absent: {self._archive_root}"
+                )
             payload = {
                 "schema_revision": EXTRACTION_MANIFEST_REVISION,
                 "complete": True,
@@ -563,7 +571,9 @@ class PinnedLocalArchiveHtmlLoader:
     def load(self) -> tuple[SourceDocument, ...]:
         """Verify the repository snapshot and publish portable source metadata."""
         if not self._archive_path.is_file():
-            raise FileNotFoundError(f"pinned local archive is missing: {self._settings.archive_path}")
+            raise FileNotFoundError(
+                f"pinned local archive is missing: {self._settings.archive_path}"
+            )
         safe_loader = SafeZipHtmlLoader(
             self._archive_path,
             self._raw_root / "extracted" / self._settings.archive_sha256,
@@ -660,7 +670,9 @@ class SnapshotHttpArchiveHtmlLoader:
         if existing is not None:
             return self._load_locked(existing)
         if self._offline:
-            raise RuntimeError("offline replay requires a complete valid source lock/cache")
+            raise RuntimeError(
+                "offline replay requires a complete valid source lock/cache"
+            )
         return self._download_and_lock()
 
     def _load_locked(self, lock: dict[str, Any]) -> tuple[SourceDocument, ...]:
@@ -738,7 +750,9 @@ class SnapshotHttpArchiveHtmlLoader:
                 raise ValueError("archive transport requested URL is inconsistent")
             _validate_final_https_url(result.final_url)
             if size != result.byte_size:
-                raise ValueError("downloaded archive size did not match transport result")
+                raise ValueError(
+                    "downloaded archive size did not match transport result"
+                )
             archive_relative = f"archives/{observed}.zip"
             archive_path = self._raw_root / archive_relative
             _reject_existing_symlink_components(archive_path)
@@ -821,7 +835,9 @@ class SnapshotHttpArchiveHtmlLoader:
                 archive_cache_path=archive_relative,
             )
             self._begin_source_publication(observed)
-            self._record_and_replace(lock_path=self._raw_root / "source.lock.json", payload=lock)
+            self._record_and_replace(
+                lock_path=self._raw_root / "source.lock.json", payload=lock
+            )
             self._record_and_replace(
                 lock_path=self._raw_root / "fetch_manifest.json",
                 payload=manifest,
@@ -910,7 +926,9 @@ class SnapshotHttpArchiveHtmlLoader:
                 previous = None
             else:
                 if stat.S_ISLNK(mode) or not stat.S_ISREG(mode):
-                    raise ValueError("source publication metadata must be a regular file")
+                    raise ValueError(
+                        "source publication metadata must be a regular file"
+                    )
                 previous = _read_bounded_regular_file(
                     path,
                     max_bytes=_MAX_SOURCE_ROLLBACK_BACKUP_BYTES,
@@ -918,7 +936,9 @@ class SnapshotHttpArchiveHtmlLoader:
                 )
             records.append((path, previous))
         self._rollback_records = records
-        if not self._refresh or not any(previous is not None for _path, previous in records):
+        if not self._refresh or not any(
+            previous is not None for _path, previous in records
+        ):
             return
         journal = self._source_rollback_root
         if journal.exists() or journal.is_symlink():
@@ -1130,8 +1150,7 @@ def _tree_paths_for_archive_members(member_paths: set[str]) -> set[str]:
     for member_path in member_paths:
         parts = PurePosixPath(member_path).parts
         paths.update(
-            PurePosixPath(*parts[:index]).as_posix()
-            for index in range(1, len(parts))
+            PurePosixPath(*parts[:index]).as_posix() for index in range(1, len(parts))
         )
     return paths
 
@@ -1160,7 +1179,11 @@ def _existing_tree_paths(root: Path) -> set[str]:
 def _safe_member_name(value: str) -> PurePosixPath:
     if not value or "\x00" in value or "\\" in value:
         raise ValueError("unsafe ZIP member path")
-    if value.startswith("/") or value.startswith("//") or _WINDOWS_DRIVE_PATTERN.match(value):
+    if (
+        value.startswith("/")
+        or value.startswith("//")
+        or _WINDOWS_DRIVE_PATTERN.match(value)
+    ):
         raise ValueError("unsafe absolute ZIP member path")
     stripped = value[:-1] if value.endswith("/") else value
     path = PurePosixPath(stripped)
@@ -1385,7 +1408,9 @@ def _preflight_zip_member_count(stream: BinaryIO, max_members: int) -> None:
             variable_size = name_size + extra_size + comment_size
             record_size = 46 + variable_size
             if record_size > remaining:
-                raise zipfile.BadZipFile("ZIP central-directory record exceeds its bounds")
+                raise zipfile.BadZipFile(
+                    "ZIP central-directory record exceeds its bounds"
+                )
             stream.seek(variable_size, os.SEEK_CUR)
             remaining -= record_size
             observed_members += 1
@@ -1748,8 +1773,7 @@ def _validate_source_lock(
         or lock.get("archive_format") != settings.archive_format
         or lock.get("archive_root") != settings.archive_root
         or lock.get("source_base_url") != settings.source_base_url
-        or lock.get("include_path_prefixes")
-        != list(settings.include_path_prefixes)
+        or lock.get("include_path_prefixes") != list(settings.include_path_prefixes)
     ):
         raise RuntimeError("source lock settings identity is inconsistent")
     observed = lock.get("observed_sha256")
@@ -1900,7 +1924,9 @@ def _read_source_rollback_journal(
     with os.scandir(journal) as entries:
         for entry in entries:
             if not entry.is_file(follow_symlinks=False):
-                raise RuntimeError("source refresh rollback journal contains a special entry")
+                raise RuntimeError(
+                    "source refresh rollback journal contains a special entry"
+                )
             actual_files.add(entry.name)
     if actual_files != expected_files:
         raise RuntimeError("source refresh rollback journal file set is invalid")
@@ -1977,7 +2003,10 @@ def _snapshot_source_manifest_commits_candidate(
             label="archive source manifest",
         )
         source = json.loads(encoded.decode("utf-8"))
-        if not isinstance(source, dict) or set(source) != _COMMITTED_ARCHIVE_SOURCE_KEYS:
+        if (
+            not isinstance(source, dict)
+            or set(source) != _COMMITTED_ARCHIVE_SOURCE_KEYS
+        ):
             return False
         archive_sha256 = str(lock["observed_sha256"])
         archive_relative = str(lock["cache_relative_path"])
@@ -2021,7 +2050,10 @@ def _snapshot_source_manifest_commits_candidate(
     raw_pages = source.get("pages")
     if (
         not isinstance(raw_pages, list)
-        or any(not isinstance(page, dict) or set(page) != _ARCHIVE_PAGE_KEYS for page in raw_pages)
+        or any(
+            not isinstance(page, dict) or set(page) != _ARCHIVE_PAGE_KEYS
+            for page in raw_pages
+        )
         or raw_pages != pages
         or not isinstance(source.get("parser_settings"), dict)
         or not isinstance(source.get("cache_reused"), bool)
@@ -2083,7 +2115,9 @@ def snapshot_http_archive_refresh_candidate_is_committed(
     if dataset is None:
         return False
     if candidate_source_config != source_config_sha256:
-        raise RuntimeError("pending source refresh config does not match the active config")
+        raise RuntimeError(
+            "pending source refresh config does not match the active config"
+        )
     lock = validate_snapshot_http_archive_cache(
         settings,
         raw_root,
@@ -2117,11 +2151,14 @@ def recover_snapshot_http_archive_refresh(
     committed = False
     if not force_rollback:
         if settings is None or source_config_sha256 is None:
-            if _dataset_committing_source_candidate(
-                raw_root,
-                candidate_sha256=str(payload["candidate_source_snapshot_sha256"]),
-                source_config_sha256=str(payload["source_config_sha256"]),
-            ) is not None:
+            if (
+                _dataset_committing_source_candidate(
+                    raw_root,
+                    candidate_sha256=str(payload["candidate_source_snapshot_sha256"]),
+                    source_config_sha256=str(payload["source_config_sha256"]),
+                )
+                is not None
+            ):
                 raise RuntimeError(
                     "source refresh candidate validation requires active settings"
                 )

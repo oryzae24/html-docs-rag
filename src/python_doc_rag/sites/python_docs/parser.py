@@ -276,7 +276,13 @@ def _validated_source_url(source_url: str) -> str:
 def _source_url_with_anchor(source_url: str, anchor: str) -> str:
     parsed = urlsplit(source_url)
     return urlunsplit(
-        (parsed.scheme, parsed.netloc, parsed.path, parsed.query, quote(anchor, safe="-._~"))
+        (
+            parsed.scheme,
+            parsed.netloc,
+            parsed.path,
+            parsed.query,
+            quote(anchor, safe="-._~"),
+        )
     )
 
 
@@ -308,7 +314,9 @@ def _text_without_permalink(element: Tag) -> str:
 
 def _block_text(element: Tag) -> str:
     if element.name == "pre":
-        lines = [line.rstrip() for line in element.get_text("", strip=False).splitlines()]
+        lines = [
+            line.rstrip() for line in element.get_text("", strip=False).splitlines()
+        ]
         return "\n".join(lines).strip()
     return _text_without_permalink(element)
 

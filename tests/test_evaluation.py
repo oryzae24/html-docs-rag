@@ -183,9 +183,7 @@ def test_evaluate_retrieval_reports_top_10_mrr_and_groups() -> None:
             ]
 
     questions = [
-        EvaluationQuestion(
-            "first", ("second-answer",), "q1", "exact_identifier", "io"
-        ),
+        EvaluationQuestion("first", ("second-answer",), "q1", "exact_identifier", "io"),
         EvaluationQuestion(
             "eighth",
             ("unused-answer", "second-answer"),
@@ -193,9 +191,7 @@ def test_evaluate_retrieval_reports_top_10_mrr_and_groups() -> None:
             "conceptual",
             "io",
         ),
-        EvaluationQuestion(
-            "missing", ("absent",), "q3", "operational", "subprocess"
-        ),
+        EvaluationQuestion("missing", ("absent",), "q3", "operational", "subprocess"),
     ]
 
     report = evaluate_retrieval(RankedSearcher(), questions, top_k=10)

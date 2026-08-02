@@ -158,9 +158,7 @@ def main() -> int:
         "embedding_model": embedding_model_name,
         "search_fields": ["page_title", "section_title", "text"],
         "parent_retrieval_revision": (
-            PARENT_RETRIEVAL_REVISION
-            if args.context_mode == "parent"
-            else None
+            PARENT_RETRIEVAL_REVISION if args.context_mode == "parent" else None
         ),
         "child_candidate_k": (
             args.child_candidate_k if args.context_mode == "parent" else None
@@ -218,9 +216,7 @@ def _attach_parent_diagnostics(
             "child_candidate_count": trace.child_candidate_count,
             "unique_parent_candidate_count": trace.unique_parent_candidate_count,
             "child_to_parent_compression_ratio": trace.compression_ratio,
-            "maximum_children_for_one_parent": (
-                trace.maximum_children_for_one_parent
-            ),
+            "maximum_children_for_one_parent": (trace.maximum_children_for_one_parent),
             "matches": [
                 {
                     "parent_rank": match.parent_rank,

@@ -162,9 +162,7 @@ def test_answer_prompt_receives_only_validated_evidence_not_full_context() -> No
     assert "送ってはいけない残りの本文" not in answer_prompt
     assert chunk.source_url not in answer_prompt
     assert result.sources[0].url == chunk.source_url
-    assert pipeline.last_evidence == (
-        EvidenceItem("S1", ("必要な根拠です。",)),
-    )
+    assert pipeline.last_evidence == (EvidenceItem("S1", ("必要な根拠です。",)),)
 
 
 def test_invalid_evidence_retries_without_exposing_rejected_output() -> None:

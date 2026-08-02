@@ -28,7 +28,7 @@ from python_doc_rag.source_identity import (
 
 
 def _legacy_site_toml() -> str:
-    return '''[dataset]
+    return """[dataset]
 name = "Python 3.13 documentation"
 slug = "python-3-13-ja"
 language = "ja"
@@ -52,7 +52,7 @@ embedding_batch_size = 8
 
 [profile]
 prepare = "none"
-'''
+"""
 
 
 def _legacy_parser(parser_type: str = "python-sphinx") -> ParserSettings:

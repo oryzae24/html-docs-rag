@@ -111,9 +111,7 @@ def main() -> int:
             "execution_device": args.device,
             "created_at": finished_at.isoformat(),
             "peak_cpu_rss_bytes": _maximum_rss_bytes(),
-            "cpu_rss_increase_bytes": max(
-                0, _maximum_rss_bytes() - initial_rss
-            ),
+            "cpu_rss_increase_bytes": max(0, _maximum_rss_bytes() - initial_rss),
             "peak_gpu_vram_allocated_bytes": _peak_gpu_vram(),
             "child_index_size_bytes": index_path.stat().st_size,
             "child_metadata_size_bytes": metadata_path.stat().st_size,

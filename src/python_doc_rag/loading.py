@@ -147,12 +147,17 @@ class CrawlBoundary:
 class CrawlScope:
     """Normalize links and enforce the union of configured start boundaries."""
 
-    def __init__(self, start_urls: Sequence[str], *, retain_query: bool = False) -> None:
+    def __init__(
+        self, start_urls: Sequence[str], *, retain_query: bool = False
+    ) -> None:
         if not start_urls:
             raise ValueError("start_urls must not be empty")
         self._retain_query = retain_query
         normalized = tuple(
-            dict.fromkeys(normalize_http_url(value, retain_query=retain_query) for value in start_urls)
+            dict.fromkeys(
+                normalize_http_url(value, retain_query=retain_query)
+                for value in start_urls
+            )
         )
         self._start_urls = normalized
         self._boundaries = tuple(_boundary_for(value) for value in normalized)
@@ -292,7 +297,9 @@ class BoundedHttpHtmlLoader:
             retain_query=settings.retain_query,
         )
         self._summary: HttpLoadSummary | None = None
-        self._robots: dict[tuple[str, str], urllib.robotparser.RobotFileParser | None] = {}
+        self._robots: dict[
+            tuple[str, str], urllib.robotparser.RobotFileParser | None
+        ] = {}
         self._source_config_sha256 = source_config_sha256(settings, category=category)
         self._cache_backup: Path | None = None
 
@@ -313,7 +320,9 @@ class BoundedHttpHtmlLoader:
         cached = self._load_complete_cache()
         if cached is not None and not self._refresh:
             documents, summary = cached
-            self._summary = replace_summary(summary, cache_reused=True, offline=self._offline)
+            self._summary = replace_summary(
+                summary, cache_reused=True, offline=self._offline
+            )
             self._record_cache_replay()
             return documents
         if cache_present and not self._refresh:
@@ -430,7 +439,9 @@ class BoundedHttpHtmlLoader:
                 },
             )
             documents.append(document)
-            cache_relative = f"pages/{hashlib.sha256(final_url.encode()).hexdigest()}.html"
+            cache_relative = (
+                f"pages/{hashlib.sha256(final_url.encode()).hexdigest()}.html"
+            )
             cache_path = staging / cache_relative
             _write_text_atomic(content, cache_path)
             page_records.append(
@@ -547,7 +558,13 @@ class BoundedHttpHtmlLoader:
                 int(manifest.get("duplicate_content_count", 0)),
                 int(manifest.get("excluded_external_url_count", 0)),
             )
-        except (KeyError, OSError, TypeError, ValueError, json.JSONDecodeError) as error:
+        except (
+            KeyError,
+            OSError,
+            TypeError,
+            ValueError,
+            json.JSONDecodeError,
+        ) as error:
             raise RuntimeError(
                 f"partial crawl staging is invalid and was not overwritten: {error}"
             ) from error
@@ -570,7 +587,9 @@ class BoundedHttpHtmlLoader:
                 last_error = error
             except Exception as error:  # noqa: BLE001 - bounded retry boundary
                 last_error = error
-        raise RuntimeError(f"fetch failed after bounded retries: {last_error}") from last_error
+        raise RuntimeError(
+            f"fetch failed after bounded retries: {last_error}"
+        ) from last_error
 
     def _robots_allowed(self, url: str) -> bool:
         if not self._settings.respect_robots_txt:
@@ -582,7 +601,9 @@ class BoundedHttpHtmlLoader:
             try:
                 response = self._fetch_with_retries(robots_url)
                 if response.status < 200 or response.status >= 300:
-                    raise ValueError(f"unexpected robots HTTP status: {response.status}")
+                    raise ValueError(
+                        f"unexpected robots HTTP status: {response.status}"
+                    )
                 final = urlsplit(response.final_url)
                 if (final.scheme, final.netloc.lower()) != key:
                     raise ValueError("robots redirect escaped origin")
@@ -719,7 +740,9 @@ def normalize_http_url(value: str, *, retain_query: bool = False) -> str:
     else:
         netloc = host
     query = parsed.query if retain_query else ""
-    return urlunsplit((scheme, netloc, quote(normalized_path, safe="/%:@-._~"), query, ""))
+    return urlunsplit(
+        (scheme, netloc, quote(normalized_path, safe="/%:@-._~"), query, "")
+    )
 
 
 def replace_summary(
@@ -763,7 +786,7 @@ def _decode_html(body: bytes, content_type: str) -> str:
     match = re.search(r"charset=([^;\s]+)", content_type, flags=re.IGNORECASE)
     if match:
         try:
-            return body.decode(match.group(1).strip('"\''))
+            return body.decode(match.group(1).strip("\"'"))
         except (LookupError, UnicodeDecodeError):
             pass
     decoded = UnicodeDammit(body, is_html=True).unicode_markup
@@ -950,13 +973,15 @@ def validate_bounded_http_cache(
     ]
     if mismatched:
         raise RuntimeError(
-            "bounded source manifest identity is inconsistent: "
-            f"{', '.join(mismatched)}"
+            f"bounded source manifest identity is inconsistent: {', '.join(mismatched)}"
         )
     raw_records = source.get("pages")
     if not isinstance(raw_records, list) or len(raw_records) != expected_page_count:
         raise RuntimeError("bounded source manifest page count is inconsistent")
-    if any(not isinstance(record, dict) or set(record) != _PAGE_RECORD_KEYS for record in raw_records):
+    if any(
+        not isinstance(record, dict) or set(record) != _PAGE_RECORD_KEYS
+        for record in raw_records
+    ):
         raise RuntimeError("bounded source manifest page record schema is invalid")
     failures = source.get("failures")
     if (
@@ -1024,11 +1049,15 @@ def recover_bounded_http_refresh(
                 f"bounded HTTP cache transaction path is a symlink/junction: {path}"
             )
         if path.exists() and not path.is_dir():
-            raise RuntimeError(f"bounded HTTP cache transaction path is not a directory: {path}")
+            raise RuntimeError(
+                f"bounded HTTP cache transaction path is not a directory: {path}"
+            )
     if not backup.exists():
         if failed.exists():
             if not cache.exists():
-                raise RuntimeError("bounded HTTP cache recovery lost its committed cache")
+                raise RuntimeError(
+                    "bounded HTTP cache recovery lost its committed cache"
+                )
             _remove_cache_path(failed)
         return True
     if not force_rollback and bounded_http_refresh_candidate_is_committed(cache):

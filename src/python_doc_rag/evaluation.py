@@ -195,8 +195,7 @@ def load_evaluation_questions(path: Path) -> list[EvaluationQuestion]:
                 not isinstance(keywords, list)
                 or not keywords
                 or not all(
-                    isinstance(keyword, str) and keyword.strip()
-                    for keyword in keywords
+                    isinstance(keyword, str) and keyword.strip() for keyword in keywords
                 )
             ):
                 raise ValueError(
@@ -208,8 +207,7 @@ def load_evaluation_questions(path: Path) -> list[EvaluationQuestion]:
             )
             has_metadata = any(value is not None for value in metadata_values)
             if has_metadata and not all(
-                isinstance(value, str) and value.strip()
-                for value in metadata_values
+                isinstance(value, str) and value.strip() for value in metadata_values
             ):
                 raise ValueError(
                     f"invalid evaluation question at line {line_number}: "
@@ -273,7 +271,9 @@ def evaluate_retrieval(
                 top_10_hit=_has_url_hit(results[:10], item.expected_url_keywords),
                 first_relevant_rank=first_relevant_rank,
                 reciprocal_rank=(
-                    1.0 / first_relevant_rank if first_relevant_rank is not None else 0.0
+                    1.0 / first_relevant_rank
+                    if first_relevant_rank is not None
+                    else 0.0
                 ),
                 retrieval_seconds=retrieval_seconds,
                 id=item.id,
@@ -349,8 +349,7 @@ def retrieval_evaluation_to_dict(report: RetrievalEvaluation) -> dict[str, Any]:
             for name, metrics in report.query_type_metrics.items()
         },
         "topics": {
-            name: metrics.to_dict()
-            for name, metrics in report.topic_metrics.items()
+            name: metrics.to_dict() for name, metrics in report.topic_metrics.items()
         },
         "unmatched_top_10": list(report.unmatched_top_10),
         "questions": [

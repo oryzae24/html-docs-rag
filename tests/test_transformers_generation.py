@@ -230,9 +230,7 @@ def test_generate_uses_measured_ids_and_decodes_only_new_tokens(
     assert generate_call["do_sample"] is False
     assert tokenizer.decode_calls == [([90, 91], True)]
     assert model.eval_called
-    assert model.to_calls == [
-        {"device": "cuda", "dtype": FakeTorch.bfloat16}
-    ]
+    assert model.to_calls == [{"device": "cuda", "dtype": FakeTorch.bfloat16}]
     assert torch.inference_entries == 1
     assert torch.inference_exits == 1
     assert generator.generation_history[0].input_tokens == 3

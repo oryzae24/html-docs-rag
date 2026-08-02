@@ -624,7 +624,9 @@ def _largest_fitting_window(
         if left_open:
             options.append((spans[left_index][0] - spans[left_index - 1][0], 0, "left"))
         if right_open:
-            options.append((spans[right_index + 1][1] - spans[right_index][1], 1, "right"))
+            options.append(
+                (spans[right_index + 1][1] - spans[right_index][1], 1, "right")
+            )
         _size, _tie, side = min(options)
         proposed_left = left_index - 1 if side == "left" else left_index
         proposed_right = right_index + 1 if side == "right" else right_index
@@ -700,7 +702,9 @@ def _context_chunk(
 
 def _paragraph_spans(text: str) -> list[tuple[int, int]]:
     spans: list[tuple[int, int]] = []
-    for match in re.finditer(r"(?:\A|\n[ \t]*\n)(.*?)(?=\n[ \t]*\n|\Z)", text, re.DOTALL):
+    for match in re.finditer(
+        r"(?:\A|\n[ \t]*\n)(.*?)(?=\n[ \t]*\n|\Z)", text, re.DOTALL
+    ):
         raw_start, raw_end = match.span(1)
         value = match.group(1)
         leading = len(value) - len(value.lstrip())
@@ -774,8 +778,10 @@ def _required_record_string(
 
 def _required_hash(metadata: dict[str, Any], name: str) -> str:
     value = metadata.get(name)
-    if not isinstance(value, str) or len(value) != 64 or any(
-        character not in "0123456789abcdef" for character in value
+    if (
+        not isinstance(value, str)
+        or len(value) != 64
+        or any(character not in "0123456789abcdef" for character in value)
     ):
         raise ValueError(f"{name} must be a 64-character lowercase hex")
     return value

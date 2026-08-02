@@ -37,7 +37,9 @@ class ExactChoiceTokenTrie:
                 for token in tokenizer.encode(choice, add_special_tokens=False)
             )
             if not tokens:
-                raise ExactChoiceGenerationError("choice tokenization must not be empty")
+                raise ExactChoiceGenerationError(
+                    "choice tokenization must not be empty"
+                )
             if tokens in seen_tokens:
                 raise ExactChoiceGenerationError(
                     "distinct choices produced the same token sequence"

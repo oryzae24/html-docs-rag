@@ -43,9 +43,7 @@ def test_frozen_context_round_trip_keeps_exact_tuple_and_sanitizes_prompt(
 ) -> None:
     path = tmp_path / "contexts.json"
     record = _record()
-    save_frozen_contexts_atomic(
-        [record], path, settings={"openai_api_used": False}
-    )
+    save_frozen_contexts_atomic([record], path, settings={"openai_api_used": False})
 
     loaded = load_frozen_contexts(path)
 

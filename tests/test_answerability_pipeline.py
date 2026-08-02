@@ -64,10 +64,7 @@ def pipeline(outputs: list[str], chunks: tuple[SearchChunk, ...] | None = None):
 
 
 ANSWER = '{"status":"answer","answer_text":"回答[S1]","reason":null}'
-ABSTAIN = (
-    '{"status":"abstain","answer_text":"",'
-    '"reason":"insufficient_evidence"}'
-)
+ABSTAIN = '{"status":"abstain","answer_text":"","reason":"insufficient_evidence"}'
 
 
 def test_pipeline_returns_valid_answer() -> None:

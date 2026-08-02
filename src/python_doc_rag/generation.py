@@ -203,9 +203,7 @@ def build_regeneration_prompt(
     available_citations: tuple[str, ...],
 ) -> str:
     """Build a correction prompt without echoing invalid output or URLs."""
-    expected_citations = tuple(
-        f"[S{number}]" for number in range(1, len(contexts) + 1)
-    )
+    expected_citations = tuple(f"[S{number}]" for number in range(1, len(contexts) + 1))
     if available_citations != expected_citations:
         raise ValueError("available_citations must match the selected contexts")
     context_text = _format_contexts(build_prompt_contexts(contexts))

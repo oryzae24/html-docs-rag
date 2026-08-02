@@ -15,7 +15,7 @@ SHA256 = "a" * 64
 
 
 def _site_toml(loader: str, *, parser_extra: str = "") -> str:
-    return f'''[dataset]
+    return f"""[dataset]
 name = "Fixture documentation"
 slug = "fixture-docs"
 language = "ja"
@@ -40,7 +40,7 @@ embedding_batch_size = 8
 
 [profile]
 prepare = "none"
-'''
+"""
 
 
 def _pinned_loader() -> str:
@@ -143,7 +143,7 @@ def test_archive_settings_reject_unknown_parser_keys(tmp_path: Path) -> None:
         load_site_config(
             _write(
                 tmp_path,
-                _site_toml(_pinned_loader(), parser_extra="selector = \"main\""),
+                _site_toml(_pinned_loader(), parser_extra='selector = "main"'),
             )
         )
 

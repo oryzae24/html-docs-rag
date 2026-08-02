@@ -59,9 +59,7 @@ class GenerationContract(Protocol):
         """Build the first model-visible prompt before serialization."""
         ...
 
-    def build_retry_prompt(
-        self, question: str, contexts: Sequence[SearchChunk]
-    ) -> str:
+    def build_retry_prompt(self, question: str, contexts: Sequence[SearchChunk]) -> str:
         """Build the single correction prompt without invalid output."""
         ...
 
@@ -98,9 +96,7 @@ class LegacyGenerationContract:
             document_scope=self._document_scope,
         )
 
-    def build_retry_prompt(
-        self, question: str, contexts: Sequence[SearchChunk]
-    ) -> str:
+    def build_retry_prompt(self, question: str, contexts: Sequence[SearchChunk]) -> str:
         citations = tuple(f"[S{number}]" for number in range(1, len(contexts) + 1))
         return build_regeneration_prompt(
             question, contexts, available_citations=citations
@@ -143,9 +139,7 @@ class AnswerOrAbstainGenerationContract:
             document_scope=self._document_scope,
         )
 
-    def build_retry_prompt(
-        self, question: str, contexts: Sequence[SearchChunk]
-    ) -> str:
+    def build_retry_prompt(self, question: str, contexts: Sequence[SearchChunk]) -> str:
         return _build_answer_or_abstain_prompt(
             question,
             contexts,

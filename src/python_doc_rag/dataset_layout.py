@@ -250,7 +250,9 @@ def resolve_dataset_artifacts(
         metadata_path=resolve_manifest_path(root, manifest.dense_metadata_path),
         index_manifest_path=resolve_manifest_path(root, manifest.dense_manifest_path),
         source_manifest_path=resolve_manifest_path(root, manifest.source_manifest_path),
-        profile_artifact_root=resolve_manifest_path(root, manifest.profile_artifact_root),
+        profile_artifact_root=resolve_manifest_path(
+            root, manifest.profile_artifact_root
+        ),
         dataset_manifest=manifest,
     )
 
