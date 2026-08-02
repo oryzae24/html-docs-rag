@@ -59,7 +59,7 @@ Hybridの主な失敗:
 引用形式10/10はsemantic groundingを保証しない。形式検証はcitation markerとURL信頼
 境界を守るが、取得節の正しさ、引用による主張支持、回答の完全性は別に評価する。
 
-## OpenAI judgeの改善履歴
+## OpenAI Judgeの改善履歴
 
 評価専用の`OpenAIResponsesJudge`をoptional dependencyとして実装した。Responses API、
 strict JSON Schema、`store=False`、model名必須、限定retry/timeoutを使用し、ケース単位
@@ -79,7 +79,7 @@ Hybridはholdout検索のTop-10を改善したが、このRAG評価では正解s
 Denseを下回り、厳格な人手groundingも改善しなかった。Denseを既定として維持し、
 Hybridの既定化は保留する。
 
-## OpenAI judge v2校正
+## OpenAI Judge v2校正
 
 v1 smokeでは、正解回答に対して`grounded=true`、`supported_answer`、未支持・欠落なし
 である一方、4品質scoreがすべて0になる不整合を確認した。v1はscore範囲だけをschemaで
@@ -112,7 +112,7 @@ Structured Outputの形式適合は評価内容の妥当性を保証しない。
 直接混ぜず、今後の正式な評価方式はv3とする。既存v1、v2結果は改善履歴としてGit管理外
 に保持する。
 
-## OpenAI judge v3責務分離
+## OpenAI Judge v3責務分離
 
 v2全件評価では、回答中の主張が資料で支持されていても、required factsの欠落を理由に
 `grounded=false`または`false_answer`となる部分回答があり、groundedness、completeness、

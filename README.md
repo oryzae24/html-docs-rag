@@ -1,10 +1,10 @@
 # HTML Docs RAG
 
-Citation-aware multi-knowledge-base RAG for HTML documentation
+Citation-aware RAG over multiple Knowledge Bases built from HTML documentation
 
 HTML Docs RAG is a proof of concept for preparing static HTML documentation,
 building local retrieval indexes, and answering questions with citations. It
-supports multiple knowledge bases, selects loaders and parsers through TOML,
+supports multiple Knowledge Bases, selects loaders and parsers through TOML,
 and exposes both a Python CLI and a read-only REST API.
 
 The evaluated documentation sets are:
@@ -14,10 +14,13 @@ The evaluated documentation sets are:
 - the official uv Documentation, parsed with the configurable generic HTML
   parser.
 
-Embedding, reranking, and generation use local Hugging Face models. The normal
-runtime and the evaluations reported in this repository do not require the
-OpenAI API. Model weights, generated indexes, processed corpora, and caches are
-not included.
+Embedding, reranking, and generation use local Hugging Face models. The
+application runtime does not require the OpenAI API, and the final local quality
+sprints did not use the OpenAI API or OpenAI Judge. An optional evaluation
+helper and historical OpenAI Judge results are documented in
+[`evaluation/rag_quality_summary.md`](evaluation/rag_quality_summary.md); those
+historical evaluations require separate API access to reproduce. Model weights,
+generated indexes, processed corpora, and caches are not included.
 
 ## What it provides
 
@@ -25,14 +28,14 @@ not included.
   model-generated URLs.
 - A strict answer-or-abstain contract in addition to the backward-compatible
   legacy answer mode.
-- Multiple independently prepared knowledge bases served by one runtime.
+- Multiple independently prepared Knowledge Bases served by one runtime.
 - TOML-selected loader and parser combinations with fail-closed validation.
 - A dedicated parser for Python's Sphinx-generated documentation.
 - A configurable parser for conventional static HTML documentation.
 - Pinned local ZIP archives, source-locked mutable ZIP archives, bounded static
   HTML crawling, and local expanded HTML trees.
 - Local Hugging Face embedding, reranking, and generation models.
-- A read-only REST API for querying prebuilt knowledge bases.
+- A read-only REST API for querying prebuilt Knowledge Bases.
 - Reproducible source acquisition through a frozen snapshot, provenance record,
   and source lock for mutable upstream archives.
 
@@ -48,8 +51,8 @@ The public repository is named `html-docs-rag`, while the Python distribution
 name remains `python-doc-rag-assistant`.
 
 The `python_doc_rag` import namespace is retained for compatibility with the
-original Python-document PoC. The current architecture supports multiple HTML
-documentation knowledge bases.
+original Python-document PoC. The current architecture supports multiple
+Knowledge Bases built from HTML documentation.
 
 These interfaces are intentionally unchanged:
 
@@ -60,6 +63,28 @@ import python_doc_rag
 ```bash
 python -m python_doc_rag --help
 ```
+
+## Runtime profiles and deployment scope
+
+| Selection | Retrieval | Reranker | Generator and answer contract |
+| --- | --- | --- | --- |
+| No `--profile` | Dense | None | `Qwen/Qwen3-4B-Instruct-2507` with no profile revision pin; legacy answer mode |
+| `recommended-v1` | Hybrid candidates | mMARCO MiniLM | `Qwen/Qwen3-4B-Instruct-2507`; `answer-or-abstain-v1` |
+| `recommended-v2` or `recommended` | Technical-field retrieval with BGE-M3 | mMARCO MiniLM | `Qwen/Qwen3-8B`; `answer-or-abstain-v1` |
+
+`recommended` currently aliases `recommended-v2`. `recommended-v1` remains a
+lower-memory rollback option, while omitting `--profile` preserves the original
+Dense, no-reranker, legacy-answer defaults.
+
+The recorded `recommended-v2` runs used an NVIDIA L4 with 23,034 MiB of VRAM;
+the profile targets a 24 GB-class GPU and is not guaranteed to fit a 16 GB-class
+environment. GPU memory and latency are environment-specific reference values.
+
+The supported inputs are bounded static HTML documentation sources. JavaScript
+rendering, authenticated sites, PDF/Word ingestion, and universal crawling are
+out of scope. The REST API is a trusted-environment, single-worker PoC without
+authentication or authorization; it is not intended as a production API on the
+public Internet.
 
 ## Requirements
 
@@ -97,7 +122,7 @@ The package provides six commands:
 - `check`: validate prepared artifacts without loading models.
 - `profile`: display a fixed runtime profile without loading models.
 - `prepare`: acquire and prepare an HTML documentation data set.
-- `serve`: run the read-only multi-knowledge-base REST API.
+- `serve`: run the read-only multi-KB REST API.
 
 Inspect any command without downloading a model:
 
@@ -105,6 +130,9 @@ Inspect any command without downloading a model:
 uv run --frozen python -m python_doc_rag --help
 uv run --frozen python -m python_doc_rag prepare --help
 uv run --frozen python -m python_doc_rag check --help
+uv run --frozen python -m python_doc_rag profile --help
+uv run --frozen python -m python_doc_rag ask --help
+uv run --frozen python -m python_doc_rag chat --help
 uv run --frozen python -m python_doc_rag serve --help
 ```
 
@@ -139,6 +167,10 @@ and
 The frozen Python site configuration uses the included source snapshot and does
 not fetch Python HTML from the network:
 
+Every `/path/to/...` value below is a placeholder. Replace it with a writable
+location outside the repository and reuse the same prepared data roots in any
+service configuration.
+
 ```bash
 uv run --frozen --extra inference \
   python -m python_doc_rag prepare \
@@ -164,10 +196,9 @@ uv run --frozen --extra inference \
   --question "list.sort()がNoneを返すのはなぜですか？"
 ```
 
-`recommended-v2` is the selected local profile for the recorded quality
-evaluation and targets a high-memory GPU environment. `recommended-v1` is the
-lighter retained profile. Omitting `--profile` preserves the original dense,
-legacy-answer defaults.
+These commands select `recommended-v2` explicitly. Use `recommended-v1` for the
+retained lower-memory rollback configuration; omitting `--profile` preserves the
+original Dense, no-reranker, legacy-answer defaults.
 
 ## Source snapshot reproducibility
 
@@ -264,12 +295,15 @@ answer-or-abstain implementation is experimental and is not presented as a
 general correctness guarantee. See
 [`evaluation/answerability_contract_summary.md`](evaluation/answerability_contract_summary.md).
 
-## Multi-knowledge-base REST API
+## Multi-KB REST API
 
-Prepare and validate every knowledge base before starting the service. The
+Prepare and validate every Knowledge Base before starting the service. The
 service does not upload, modify, delete, or reindex data while running.
 
-The example configuration registers separate Python and uv data roots:
+The checked-in `configs/services/multi-kb.example.toml` is a template. Its
+relative `data_root` values are placeholders resolved from that file's
+directory. Copy it to a local path outside the repository and replace both
+values with the data roots produced by `prepare`. The template contains:
 
 ```toml
 revision = "multi-kb-service-v1"
@@ -287,24 +321,28 @@ display_name = "uv Documentation"
 data_root = "../../example-data/uv-docs"
 ```
 
+For example, replace the two values above with
+`/path/to/python-docs-data` and `/path/to/uv-docs-data`. The service starts only
+after every configured Knowledge Base passes validation.
+
 Start the service on its loopback default:
 
 ```bash
 uv run --frozen --extra inference --extra api \
   python -m python_doc_rag serve \
-  --service-config configs/services/multi-kb.example.toml \
+  --service-config /path/to/local-multi-kb.toml \
   --host 127.0.0.1 \
   --port 8000
 ```
 
-Public endpoints are:
+HTTP endpoints are:
 
 | Method | Path | Purpose |
 | --- | --- | --- |
 | `GET` | `/healthz` | Process liveness |
 | `GET` | `/readyz` | Full runtime readiness |
-| `GET` | `/v1/knowledge-bases` | Safe metadata for registered knowledge bases |
-| `POST` | `/v1/knowledge-bases/{knowledge_base_id}/answers` | Answer one independent question against one knowledge base |
+| `GET` | `/v1/knowledge-bases` | Safe metadata for registered Knowledge Bases |
+| `POST` | `/v1/knowledge-bases/{knowledge_base_id}/answers` | Answer one independent question against one Knowledge Base |
 
 Example request:
 
@@ -317,11 +355,27 @@ curl --fail-with-body --silent --show-error \
 ```
 
 One shared embedding model, reranker, and generator are loaded for the process;
-retrieval artifacts remain isolated per knowledge base. Startup is all-or-
-nothing, and the supported service topology is one Uvicorn worker. Full details
-are in
+retrieval artifacts remain isolated per Knowledge Base. Startup is
+all-or-nothing. The supported service topology is one Uvicorn worker, and a
+global semaphore serializes answer processing while concurrent requests wait.
+Full details are in
 [`docs/multi_knowledge_base_api.md`](docs/multi_knowledge_base_api.md) and the
 [`API smoke summary`](evaluation/multi_knowledge_base_api_smoke_summary.md).
+
+## Feature status
+
+- Implemented runtime paths include generic HTML ingestion, the Python Sphinx
+  parser, source locking, frozen snapshot ingestion, uv portability,
+  `recommended-v1`, `recommended-v2`, the legacy answer mode, the
+  `answer-or-abstain-v1` contract, and the multi-KB REST API.
+- Existing-chunk Parent Retrieval, Full Section Parent, combined reranker plus
+  parent retrieval, evidence-first generation, and two-stage generation are
+  research-only implementations or evaluation runners. None is part of the
+  current CLI/API runtime; evaluations rejected them or did not select them.
+- The OpenAI Judge helper is optional evaluation tooling with historical results;
+  it is not an application-runtime dependency or production decision path.
+- Authentication, online reindexing, JavaScript rendering, PDF/Word ingestion,
+  and multi-worker or multi-GPU production deployment are unsupported.
 
 ## Evaluation scope
 
@@ -332,7 +386,7 @@ not raw model outputs or generated indexes. The recorded evaluations cover:
 - uv Documentation ingestion and retrieval portability;
 - dense, hybrid, technical-field, reranked, and parent-retrieval experiments;
 - answerability and answer-or-abstain behavior; and
-- multi-knowledge-base API behavior.
+- multi-KB API behavior.
 
 The currently selected profile and its limitations are documented in
 [`evaluation/final_quality_sprint_v2_summary.md`](evaluation/final_quality_sprint_v2_summary.md).

@@ -1,16 +1,17 @@
-# 複数knowledge base RAG API設計
+# 複数の Knowledge Base に対応する RAG API の設計
 
 ## 目的と境界
 
-このAPIは、準備済みの複数documentation datasetを1台のGPUサーバーへ登録し、
-GPU、Python、FAISS、Qwenを持たないクライアントからHTTPで質問できるようにする
-read-only PoCである。datasetの取得、解析、chunk、index構築は既存`prepare`で事前に
-完了し、`serve`稼働中には作成・更新・削除や再indexを行わない。
+この API は、準備済みの複数の HTML documentation データセットを 1 台の GPU
+サーバーへ登録し、GPU、Python、FAISS、Qwen を持たないクライアントから HTTP で
+質問できるようにする read-only PoC である。データセットの取得、解析、チャンク化、
+index 構築は既存の `prepare` で事前に完了させる。`serve` の稼働中は、データの
+作成・更新・削除や再インデックス化を行わない。
 
-サーバー全体で明示的なruntime profileを1つだけ使う。Generator、Embeddingモデル、
-local rerankerはプロセス内で各1回だけロードし、全knowledge baseで共有する。検索
-artifactと検索グラフはknowledge base単位で分離する。この境界によりモデルの重複を
-避けながら、1リクエストが指定外datasetを検索することを防ぐ。
+サーバー全体で明示的な runtime profile を 1 つだけ使う。Generator、Embedding モデル、
+local reranker はプロセス内で各 1 回だけロードし、全 Knowledge Base で共有する。検索
+artifact と検索グラフは Knowledge Base 単位で分離する。この境界によりモデルの重複を
+避けながら、1 リクエストが指定外のデータセットを検索することを防ぐ。
 
 ## Architecture
 
@@ -60,12 +61,13 @@ flowchart LR
 - Generator、tokenizer、prompt serializer
 - generation、answer contract、token budget設定
 
-モデルloaderはknowledge baseループの外側で各1回だけ呼ばれる。profileなしCLI、
-`recommended-v1`、`recommended-v2`の既存意味や固定revisionは変更しない。
-multi-KB Pipelineのgeneration contractには、設定由来の公開`display_name`をURL/path除去と
-単一行化したdocument scopeとして渡す。非Python KBへPython専用scopeを固定しない。
+モデル loader は Knowledge Base ループの外側で各 1 回だけ呼ばれる。profile なし CLI、
+`recommended-v1`、`recommended-v2` の既存の意味や固定 revision は変更しない。
+multi-KB Pipeline の generation contract には、設定由来の公開 `display_name` から
+URL/path を除去して単一行化した値を document scope として渡す。非 Python KB へ
+Python 専用 scope を固定しない。
 
-### knowledge base固有リソース
+### Knowledge Base 固有リソース
 
 各`KnowledgeBaseService`は設定のID・表示名、dataset名、解決済みartifact、
 FAISS index、metadata、BM25/technical field index、symbol sidecar、Retriever、
@@ -73,12 +75,12 @@ timing wrapper、`RagPipeline`を保持する。Pipelineは共有Generatorを、
 共有Embeddingモデルとreranker scorerを参照するが、検索artifactと履歴は別objectである。
 
 公開registryはServiceConfig順のimmutable mappingとして完成後に一度だけ公開する。
-未知IDを既定knowledge baseへfallbackせず、`KnowledgeBaseNotFoundError`にする。
+未知 ID を既定 Knowledge Base へ fallback せず、`KnowledgeBaseNotFoundError` にする。
 
 ## ServiceConfig
 
-設定revisionは`multi-kb-service-v1`だけを受け付ける。profileとdeviceはサーバー全体で
-1つ、knowledge baseは1件以上必要である。
+設定revisionは`multi-kb-service-v1`だけを受け付ける。profile と device はサーバー全体で
+1 つ、Knowledge Base は 1 件以上必要である。
 
 ```toml
 revision = "multi-kb-service-v1"
@@ -106,16 +108,16 @@ TOMLの並び順が一覧とregistryの安定順序になる。
 
 起動はall-or-nothingで、次の順序を守る。
 
-1. strict TOMLをparseし、revision、profile、device、全knowledge baseを検証する。
+1. strict TOMLをparseし、revision、profile、device、全 Knowledge Base を検証する。
 2. 各data-rootのdataset layout、baseline index、metadata、manifest、profile artifactを
    モデルをロードせず検査する。
 3. 各manifestからEmbedding identity（model、revision、dimension、prefix、正規化、
-   `trust_remote_code=False`）を解決し、全knowledge baseで共有可能か比較する。
+   `trust_remote_code=False`）を解決し、全 Knowledge Base で共有可能か比較する。
 4. 1件でも失敗または非互換なら、モデルloaderを一度も呼ばず起動に失敗する。
 5. 共有Embeddingモデルを1回ロードし、dimensionを再確認する。
 6. 共有local rerankerを1回ロードする。
 7. 共有Generatorとtokenizerを1回ロードする。
-8. knowledge baseごとにFAISS、metadata、BM25/field index、symbol sidecar、Retriever、
+8. Knowledge Base ごとにFAISS、metadata、BM25/field index、symbol sidecar、Retriever、
    Pipelineをeager loadする。
 9. 全件成功後にimmutable registryを公開する。
 10. runtimeをreadyへ遷移させ、HTTP受付を開始する。
@@ -135,7 +137,8 @@ service accountのlogとしてアクセスを制限する。後述の非漏洩�
 1. FastAPI/PydanticがJSON bodyを検証し、質問をstripする。空白だけ、非文字列、
    4,000文字超、追加fieldは422になる。
 2. runtime readyを確認する。未readyなら503にする。
-3. pathのknowledge base IDをimmutable registryから1件だけ解決する。未知IDは404にする。
+3. path の Knowledge Base ID を immutable registry から 1 件だけ解決する。未知 ID は
+   404 にする。
 4. サーバー共通`asyncio.Semaphore(1)`を待つ。混雑時も拒否せずqueueする。
 5. blockingなretrieval、reranking、generation全体をworker threadで実行し、event loopを
    blockしない。
@@ -145,14 +148,15 @@ service accountのlogとしてアクセスを制限する。後述の非漏洩�
    LLM出力をAPI用に再parseしない。
 
 直列化の単位はPoCとして回答処理全体である。queue待ち中も`/healthz`、`/readyz`、
-knowledge base一覧はsemaphoreを取得せず応答できる。generation historyとtiming offsetも
+Knowledge Base 一覧は semaphore を取得せず応答できる。generation history と timing offset も
 同時更新されないため、共有モデルのrequest間競合を避けられる。client切断等でrequest
 taskがcancelされても、実行中worker threadの完了まではslotを保持する。常駐serverでは
 generation metricsの保持件数も制限し、質問数に比例した履歴増加を避ける。
 
-正式対応はUvicorn 1 workerだけで、CLIに`--workers`や`--reload`は設けない。複数workerは
-別processへモデルを複製し、GPU OOMと共有状態の分断を招き得る。API稼働中に別processで
-local `ask`/`chat`を起動した場合も同じモデルが別途ロードされ得る。
+正式に対応する構成は Uvicorn 1 worker だけで、CLI に `--workers` や `--reload` は
+設けない。複数 worker は別 process へモデルを複製し、GPU OOM と共有状態の分断を
+招き得る。API 稼働中に別 process で local `ask`/`chat` を起動した場合も、同じモデルが
+別途ロードされ得る。
 
 ## HTTP contract
 
@@ -160,8 +164,8 @@ local `ask`/`chat`を起動した場合も同じモデルが別途ロードさ�
 | --- | --- | --- |
 | `GET` | `/healthz` | ASGI processのliveness |
 | `GET` | `/readyz` | 全共有モデル・全KBのreadiness |
-| `GET` | `/v1/knowledge-bases` | 設定順の安全な公開metadata |
-| `POST` | `/v1/knowledge-bases/{knowledge_base_id}/answers` | 1 KBへの独立した1質問 |
+| `GET` | `/v1/knowledge-bases` | 設定順の安全な公開 metadata |
+| `POST` | `/v1/knowledge-bases/{knowledge_base_id}/answers` | 1 つの Knowledge Base への独立した 1 質問 |
 
 `/docs`と`/openapi.json`はFastAPI標準のOpenAPI surfaceとして利用できる。
 
@@ -264,7 +268,7 @@ CLIとAPIはpublic application/runtime層を共有し、APIからCLI private hel
 
 ## Isolation、privacy、security
 
-- 1 requestはpathで指定した1 knowledge baseだけを検索し、cross-KB fallbackをしない。
+- 1 request は path で指定した 1 つの Knowledge Base だけを検索し、cross-KB fallback をしない。
 - FAISS、metadata、BM25/field index、symbol sidecarはdata-root単位で分離する。
 - generation promptのdocument scopeはKBごとの公開表示名から安全化して構築する。
 - API一覧とanswer responseへdata-root、artifact path、internal ID、chunk本文を出さない。
@@ -272,7 +276,7 @@ CLIとAPIはpublic application/runtime層を共有し、APIからCLI private hel
   artifact preflightとAPI serializationの両方でlocal pathを拒否する。
 - model promptへsource URL、source path、internal IDを渡さない。
 - 稼働中のrequest logへ質問本文、回答本文、retrieval context、model cache pathを出さない。
-- logはknowledge base ID、status、timing、stable error code程度に限定する。
+- log は Knowledge Base ID、status、timing、stable error code 程度に限定する。
 - secret、token、API keyを読み取らず、OpenAI APIを使用しない。
 
 認証、認可、API key、ACL、ユーザー管理、CORS設定は実装しない。既定hostは

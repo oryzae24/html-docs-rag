@@ -3,7 +3,7 @@
 ## Scope and status
 
 This document records the measured frozen/current source validation on branch
-`feat/pinned-python-doc-archive-ingestion`, based on main
+`feat/pinned-python-doc-archive-ingestion`, based on main commit
 `8e7508b98cd2dae47d194f3b246108d267b1e8bd`.
 The independent pre-merge review started from PR head
 `92fc8c59a496b26f866b68bf7e1d2ad36560ea8c`. The final reviewed commit is the
@@ -12,7 +12,7 @@ commit cannot embed its own SHA.
 
 The repository snapshot, protected-corpus reproduction, complete fresh GPU
 builds, current-source lifecycle, uv regression, and frozen Python + uv API
-smoke were executed on 2026-08-01. The standard/all-extra test totals are
+smoke were executed on 2026-08-01. The standard/all-extras test totals are
 recorded in the validation matrix below. Actual Google Colab was not used for this
 branch validation; the GPU integration runs below used a RunPod NVIDIA L4.
 
@@ -183,7 +183,7 @@ Four identities have distinct roles:
 | Current explicit refresh | Complete | Explicit download succeeded; observed archive bytes remained the same |
 | uv 31-page/184-section/270-chunk regression | Complete | Counts and protected portability chunk SHA reproduced |
 | uv cache reuse/offline/refresh/check/ask | Complete | Normal reuse, raw-only offline replay, explicit refresh, check, and standalone ask passed |
-| Frozen Python + uv multi-KB API smoke | Complete | Two KBs, domain isolation, abstain/404 contracts, shared models, clean exit |
+| Frozen Python + uv multi-KB API smoke | Complete | Two Knowledge Bases, domain isolation, abstain/404 contracts, shared models, clean exit |
 | Transaction/ZIP targeted suite | Complete | 308 passed; rollback, interrupt, cache tamper, path replacement, and ZIP-limit injections included |
 | Standard pytest and Ruff | Complete | 735 passed, 18 skipped in 82.84 s; Ruff passed |
 | All-extras pytest and Ruff | Complete | 753 passed in 100.18 s; Ruff passed |
@@ -278,7 +278,7 @@ pages (`guides/install-python/`, `guides/projects/`, and `guides/tools/`); the
 parsed 270-chunk JSONL and its SHA remained unchanged.
 
 The API smoke registered the frozen Python dataset and uv dataset. `readyz`
-returned 200 with two knowledge bases. Python -> uv -> Python requests stayed
+returned 200 with two Knowledge Bases. Python -> uv -> Python requests stayed
 within their respective `docs.python.org` and `docs.astral.sh` URL domains;
 unknown KB returned 404 and an out-of-corpus request returned 200 `abstain`.
 The shared embedding, reranker, and generator/tokenizer loaders each ran once.

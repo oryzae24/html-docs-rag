@@ -1,5 +1,12 @@
 # 検索・回答品質改善戦略
 
+> この文書は、初期戦略を基礎に後続の設計・評価結果を追記した累積記録である。
+> 途中の「現在」「将来」「対象外」は、各段落またはcheckpointを記録した時点の状態を
+> 指し、現行機能の一覧ではない。現行runtimeでは`recommended`が
+> `recommended-v2`を指し、`recommended-v1`はrollback用に残る。multi-KB REST APIも
+> 実装済みである。現在の利用方法は`README.md`、最終選定は
+> `evaluation/final_quality_sprint_v2_summary.md`を正本とする。
+
 ## 目的と原則
 
 この文書は、Python 3.13日本語公式ドキュメントRAGについて、現在のDense検索を
@@ -360,7 +367,7 @@ Citation形式の成功だけでsemantic groundingを成功とみなさない。
 false answer、false abstention、unanswerable時の出典表示を、将来の生成前回答不能
 判定の設計に使う。
 
-OpenAI judgeは任意で、公開Python文書だけを対象とする。Retriever、Embedding、
+OpenAI Judgeは任意で、公開Python文書だけを対象とする。Retriever、Embedding、
 AnswerGenerator、Query Rewrite、Rerankには使わない。judge値は絶対的正解ではなく、
 同一model/prompt/schemaでの比較と人手確認を必要とする。
 
@@ -470,9 +477,10 @@ MRRはHybrid baselineを下回り、Answerability false abstentionが1/6へ増�
 引用も4/6へ低下したため不採用とした。組合せもfalse abstention 2/6、RAG valid answer
 7/10となり不採用である。Retrieval hitとsemantic correctnessを同一視しない。
 
-トーナメント勝者はRerank onlyとし、production既定を変更せず
-`python -m python_doc_rag chat --profile recommended`で1コマンド起動できる明示profile
-として提供する。profileなしのDense、legacy、rerankerなしは後方互換のまま維持する。
+トーナメント勝者はRerank onlyとし、production既定を変更せず、当時の
+`recommended` alias（現在の`recommended-v1`）として提供した。準備済みdata rootを
+環境変数で指定すれば`python -m python_doc_rag chat --profile recommended`で起動できた。
+profileなしのDense、legacy、rerankerなしは後方互換のまま維持する。
 完全Section Parentはproduction CLIへ接続しない。Python固有parserからsection正本、
 child mapping、token-aware resolverまでの境界は研究資産として固定できたため、次は
 一般HTML ingestionで同じ不変条件を満たすsection生成へ進める。ただしPythonでの
@@ -518,8 +526,8 @@ Answerability 8問を作成・commitし、recommended-v1と新finalist 2件を�
 安全性上位3条件は同率だった。その次の優先順位で、equal technical-field + BGE-M3、
 mMARCO、Qwen3-8B、answer-or-abstain-v1の直接方式が、Answerability false abstention
 0/4、RAG valid answer 12/12、正解source引用11/12、fact coverage 24/29で勝った。
-two-stageはfinal contract上の追加利益がなく、statistics.kdeをabstainして10/12引用へ
-低下したため採用しない。
+two-stageはfinal contract上の追加利益がなく、statistics.kdeをabstainして正解source
+引用が10/12に低下したため採用しない。
 
 この勝者を`recommended-v2`とし、`recommended` aliasをv2へ更新する。
 `recommended-v1`はrollback用に不変で残し、profileなしのDense・legacy既定も維持する。
@@ -536,10 +544,10 @@ SHA-256 `1625fd66c693bcbca4d9318d69f344e7a46609d0d274036cc50476c4b161a869`
 answer contract、citation URL境界は変更していない。
 
 generic datasetではalgorithm profileのmodel/revision/dimension/prefixと、corpus固有の
-metadata、symbol、FAISS SHAをdataset-local manifestへ分離した。uv文書の2 start URLを
-40ページ上限で取得すると31ページ、184 section、270 chunkとなり、同じ固定BGE-M3、
-equal field RRF、mMARCO、Qwen3-8B、answer-or-abstain-v1をparameter tuningなしで適用
-できた。site固有selectorはTOMLだけに閉じている。
+metadata、symbol、FAISS SHAをdataset-local manifestへ分離した。uv Documentation では、
+2 つの start URL から上限40ページを取得すると31ページ、184 section、270 chunkとなり、
+同じ固定BGE-M3、equal field RRF、mMARCO、Qwen3-8B、answer-or-abstain-v1を
+parameter tuningなしで適用できた。site固有selectorはTOMLだけに閉じている。
 
 8問のportability smokeはblind benchmarkではない。false answer 0、false abstention 0、
 contract failure 1で、成功5回答は全件正解sourceを引用した。1件は正解sourceがTop-5に

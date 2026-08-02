@@ -160,7 +160,7 @@ robots policy、response size上限などをsource identityに含める。
 
 ## Publication atomicity
 
-- downloadはdata-root内で作成した一時file descriptorへstreamし、実読込み量に
+- downloadはdata-root内で作成した一時file descriptorへstreamし、実際の読み込み量に
   `max_archive_bytes`を適用する。retry、truncate、SHA-256計算、公開前検証は同じ
   inodeを保持して行い、完了後のSHA-256とsize確定前にはcacheとして公開しない。
 - mutable archiveは`data/raw/archives/<sha256>.zip`としてcontent-addressedに保存する。
@@ -191,7 +191,7 @@ ZIPの展開は次をfail-closedで拒否する。
 - Windows予約名、末尾dot/space、portable component長の超過
 - Unicode NFCとcase-foldを考慮したduplicate output path、implicit parent collision
 - file/directory衝突、予約済み`extraction_manifest.json`との衝突
-- central directoryの実record数、member count、declared/streamed individual member
+- central directoryの実際のレコード数、member count、declared/streamed individual member
   size、total extracted size、archive sizeの上限超過
 - 展開先の既存symlink/junction、symlink ancestor、展開後cacheへのextra/modified file
 - TOMLで固定した`archive_root`の不在
@@ -218,22 +218,27 @@ absolute local pathもコミットしない。
 
 現段階で対応するarchive formatはZIPだけで、tar、patch version自動更新、
 差分同期、HTTP Range resume、外部pluginの動的読込み、uv専用parserは対象外である。
-すべての構築・評価・回答はlocal/open modelで実行し、OpenAI APIは使用しない。
+この source workflow では、取得、パッケージ化、解析、検証、回答に OpenAI API を
+使用していない。retrieval と generation にはローカルで実行するオープンモデルを
+使用した。repository に残る optional evaluation helper と過去の OpenAI Judge 結果は、
+この source workflow の検証範囲外である。
 
 ## 2026-08-01 validation record
 
-RunPod NVIDIA L4（23,034 MiB）上で、frozen snapshotからfresh one-command
-`prepare`、recommended-v2 `check`/`ask`、完成dataset再利用、local-sourceだけの
-`--rebuild`を実行した。384 pages、2,766 sections、8,677 chunksとprotected chunk
-SHA-256 `1625fd66c693bcbca4d9318d69f344e7a46609d0d274036cc50476c4b161a869`
-をbyte-identicalに再現した。
+RunPod NVIDIA L4（23,034 MiB）上で、frozen snapshot から新規 data root の作成までを
+1 コマンドで完了する `prepare`、recommended-v2 `check`/`ask`、完成dataset再利用、
+local-sourceだけの`--rebuild`を実行した。384 pages、2,766 sections、8,677 chunksと、
+protected chunk SHA-256
+`1625fd66c693bcbca4d9318d69f344e7a46609d0d274036cc50476c4b161a869`を
+byte-identicalに再現した。
 
 current archiveは2026-08-01に初回取得し、通常再利用、raw lock/cacheだけからの
-offline replay、明示`--refresh`を確認した。uvも31 pages、184 sections、270 chunks、
-通常再利用、raw-cache-only offline replay、refresh、check/askを確認し、frozen
-Python + uvのtwo-KB API smokeもdomain分離とshared-model再利用を保って成功した。
+offline replay、明示`--refresh`を確認した。uv Documentation でも31 pages、184 sections、
+270 chunksを構成し、通常再利用、raw-cache-only offline replay、refresh、check/askを
+確認した。frozen Python + uvのtwo-KB API smokeもdomain分離とshared-model再利用を
+保って成功した。
 artifact SHA、current observed SHA/size、uv refresh時のraw-only差分、GPU peak、API結果は
 `evaluation/python_docs_source_snapshot_summary.md`を正本とする。
 
-このsource workflowのactual Google Colab実行は行っていない。過去のColab T4
-互換性試験は別の検証記録であり、このbranchのclean-room smokeとは区別する。
+この source workflow は、実際の Google Colab 環境では実行していない。過去の Colab T4
+互換性試験は別の検証記録であり、この branch の clean-room smoke とは区別する。

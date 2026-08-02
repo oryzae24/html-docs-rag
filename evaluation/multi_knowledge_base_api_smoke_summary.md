@@ -1,13 +1,13 @@
-# Multi-Knowledge-Base API GPU Smoke
+# Multi-KB API GPU Smoke
 
 ## Scope and provenance
 
 - Source code commit: `29d6bc27c0c441f80b6e21efdb82fd00ee0d3013`
 - Executed at: 2026-08-01 UTC
 - Profile: `recommended-v2`
-- Knowledge bases, in ServiceConfig order:
+- Knowledge Bases, in ServiceConfig order:
   - `python-docs`: Python 3.13 Japanese documentation, 8,677 chunks
-  - `uv-docs`: uv documentation portability smoke, 270 chunks
+  - `uv-docs`: uv Documentation corpus used for portability testing, 270 chunks
 - Process model: one Uvicorn worker and one shared answer slot
 - OpenAI API used: no
 - API key or secret used: no
@@ -45,7 +45,7 @@ resource, in the enforced order below:
 
 The two FAISS/metadata/field/symbol retrieval graphs were then loaded separately in the
 same process. Unit tests independently assert that each model loader is invoked once for
-two knowledge bases and that the per-KB retriever objects are distinct.
+two Knowledge Bases and that the per-KB retriever objects are distinct.
 
 ## Request sequence
 
@@ -69,11 +69,12 @@ The `list.sort()` response cited only a Python URL:
 The `uv sync` response cited only a uv URL:
 `https://docs.astral.sh/uv/guides/projects/#running-commands`.
 The subsequent Python request was routed back to the Python service and abstained
-without body or sources. No source crossed knowledge-base boundaries.
+without body or sources. No source from either Knowledge Base appeared in a
+response for the other.
 
 ## Result and limitations
 
-The smoke passed its operational criteria: both prepared datasets validated, the API
+The smoke passed its operational criteria: both prepared datasets were validated, the API
 became ready only after both KBs loaded, alternating routing stayed isolated, answer and
 abstain schemas worked, unknown IDs returned the stable 404 code, and the process shut
 down cleanly with exit code 0. A health request also completed while generation was

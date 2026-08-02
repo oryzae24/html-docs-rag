@@ -21,7 +21,7 @@
 - OpenAI API and OpenAI Judge were not used. No API key or secret was read or
   stored.
 
-Experiments run on NVIDIA L4 (23,034 MiB), driver `580.126.20`, PyTorch
+Experiments were run on an NVIDIA L4 (23,034 MiB), driver `580.126.20`, PyTorch
 `2.11.0+cu128`, CUDA runtime 12.8, Transformers 5.14.1, Sentence Transformers
 5.6.1, and FAISS 1.14.3. Latency and memory are L4-specific reference values.
 
@@ -86,7 +86,7 @@ Both metadata snapshots are byte-identical to the protected corpus SHA. During
 evaluation, BGE-M3 plus the reranker used at most 2.89 GB CUDA allocated / 2.96
 GB reserved and 3.62 GB process RSS; E5-base plus the reranker used 1.74 / 1.84
 GB CUDA and 2.82 GB RSS. Observed BGE index-build process memory in `nvidia-smi`
-was 4,996--5,652 MiB; allocator and CPU peaks were not captured by the initial
+ranged from 4,996 to 5,652 MiB; allocator and CPU peaks were not captured by the initial
 atomic build, so this is explicitly an observed range rather than a peak claim.
 
 ### Development selection
@@ -211,8 +211,10 @@ models abstained. Qwen3-8B also changed one RAG false abstention into an answer.
 The remaining `ensure_ascii=False` case still failed the v1 JSON contract for
 4B and Qwen3-8B; Qwen2.5 abstained. This directly motivates Phase C.
 
-Codex compared every answer to the frozen source and required facts; no LLM
-judge was called. Conservative required-fact coverage over the ten RAG cases
+Codex performed a source-grounded review of every answer against the frozen
+source and required facts; the formal OpenAI Judge helper and API were not
+invoked.
+Conservative required-fact coverage over the ten RAG cases
 plus four added hard cases is 22/35 for 4B, **25/35 for Qwen3-8B**, and 22/35
 for Qwen2.5. Major semantic errors are 3, **2**, and 2 respectively. Remaining
 Qwen3-8B defects are material: its argparse code is correct but the prose
@@ -227,10 +229,10 @@ precedence, and Qwen3-8B still omits `await` and early-exit cleanup for
 | Generator | Answerability generation mean | RAG generation mean | Peak allocated | Peak reserved | Peak CPU RSS | Cached load observation |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | 4B | 2.397 s | 4.531 s | 8.79 GB | 9.02 GB | 5.02 GB | 1.40 s |
-| **Qwen3-8B** | 2.805 s | 6.926 s | 17.15 GB | 17.48 GB | 8.01 GB | 1.39--5.25 s |
-| Qwen2.5-7B | 3.708 s | 6.137 s | 15.89 GB | 16.33 GB | 10.21 GB | 0.92--0.95 s |
+| **Qwen3-8B** | 2.805 s | 6.926 s | 17.15 GB | 17.48 GB | 8.01 GB | 1.39 to 5.25 s |
+| Qwen2.5-7B | 3.708 s | 6.137 s | 15.89 GB | 16.33 GB | 10.21 GB | 0.92 to 0.95 s |
 
-Qwen3-8B and Qwen2.5 both fit comfortably within the 23,034 MiB L4 without
+Qwen3-8B and Qwen2.5 both fit within the tested 23,034 MiB L4 without
 quantization. These timings and memory values are specific to this L4.
 
 ### Gate B and detailed artifacts
@@ -248,7 +250,7 @@ recommended-v1.
 | Frozen 22-question contexts | `ce72e8e98650df037594cc8f146a102034c8a31b6a8df9a86f2f51dfc59a797f` |
 | Frozen contexts with 4 extra hard cases | `253f23aefe556c29f9240ed7bfde6333ec4c8488aabbe1bcd007314d966252d9` |
 | Added hard-case definitions | `05d2d1de2b53555590259cb92903d2c2e7acf9f9a991c233346c0fbf9d40134e` |
-| Source-grounded human review | `c788be21b0ac2a32a5f75b64ef6b849982d3b9de25ac52319252eb17af8d6e74` |
+| Source-grounded Codex review | `c788be21b0ac2a32a5f75b64ef6b849982d3b9de25ac52319252eb17af8d6e74` |
 | 4B Answerability / RAG / hard | `4e49bf0915ebc7ea75b37f9fdac5355a60583e428f29a1d36c0885f5438a66f6` / `8d17bdbc5c895592bdd1bfe57b1a59dcfc19f2810ad5b9a9187ad7f66fb4f47d` / `47c818ff1eba35e3a0916e002235d403046c237bffc9c0c44f2136394f59d3b0` |
 | Qwen3-8B Answerability / RAG / hard | `7d741525e1495c4d8dff0544c9b20d4ca80a602a3d9262ef0468b0b6149b67fd` / `7e5d39efa6b17dab3a224d6e74928063fc57738f8918bd61210a5666f5bc82c5` / `dd15d5fcc40fd0be8a0458581df3bb5c0dc56485b63bb9646c74043fce0b2d87` |
 | Qwen2.5 Answerability / RAG / hard | `4aa04d534a02c3cb7db7f90ca1594f6d545a589ce26c34b527cfbacb92fc1dc5` / `64976f0ebb952e9dd849e685ca6f4d95fb403caed1a8e5a94f3439e4b7941cb8` / `039ce98ca1e76dcf8d2fdd06cc41e8c1dab1bbde4f875d43dbb44935da83b54a` |
@@ -320,7 +322,7 @@ recommended-profile decision.
 | `two-stage_answerability.json` | `fa0b9187475bd8d4ce1b7c42ca6761d3b2779f5ca585cd8ae75767f3fc292e20` |
 | `two-stage_rag-quality.json` | `043d9cd295da8a70265b5816a9fa65253d5225d3524d98cb613b8610f358eecf` |
 | `two-stage_hard-cases.json` | `6f91b03270cf9e04de4d57d90e217030f999b48aa14f384e700cf3550a90ea99` |
-| Source-grounded human review | `dbfb4da968676ab1c8cb8b31af1032cf930fbc736f721671f5e1e37d991022ea` |
+| Source-grounded Codex review | `dbfb4da968676ab1c8cb8b31af1032cf930fbc736f721671f5e1e37d991022ea` |
 
 ## Phase D: Evidence-first Generation
 
@@ -369,12 +371,12 @@ rejected and is excluded from Phase E rather than tuned after seeing results.
 | `evidence-first_answerability.json` | `90cf84ef0462662acaaf3074a7453cbb83e08a56ad6dd464fe65bd00b9fc090a` |
 | `evidence-first_rag-quality.json` | `b0ab3ae067b450ad1210764e95ceaae3b8a12bab94a5a1b237761627ca5e147e` |
 | `evidence-first_hard-cases.json` | `3e26ff58fb9dfcd9afa656dc97e4b6a30fe60c0be0652a72f1325faf26691416` |
-| Source-grounded human review | `0ae158898b6272c081e6b368a6e9321c778d2dfdd6e08cd32eca89899304f30d` |
+| Source-grounded Codex review | `0ae158898b6272c081e6b368a6e9321c778d2dfdd6e08cd32eca89899304f30d` |
 
 ## Phase E: Frozen Combination Tournament
 
 Phase E performed no search. It combined only the settings already frozen in
-Phases A--C. Evidence-first was excluded because Gate D failed. The
+Phases A through C. Evidence-first was excluded because Gate D failed. The
 recommended-v1 contexts were frozen independently and verified byte-for-byte
 against its earlier Answerability and RAG detailed results; this prevented a
 retrieval rerun from contaminating the generator comparison.

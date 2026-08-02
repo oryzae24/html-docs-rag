@@ -95,7 +95,7 @@ data-rootはrepository外のGit管理外領域に置いた。
 | BGE-M3 FAISS | 270 / 1,024 / 1,105,965 bytes | `38a5fb7fd117270db613ac7d0fefcc8421a9210cf7500d8689ca1a8fcc28e124` |
 | symbol sidecar | 270 / 234,917 bytes | `5a9ac53294f50e70fd2a3036c8970818cea474f5ed70adcbf8be2576c04129dd` |
 | dataset profile identity | 270 | `b790f3131246cce827d4c7cdf07facd5a1544fdfe44c559b9ba098a06728853d` |
-| fetch manifest | 31 page | `fb72e91d93f8e78a8e41e8db202cb4dc8f81d9caf4202c32b4c45224c9d4ff92` |
+| fetch manifest | 31 pages | `fb72e91d93f8e78a8e41e8db202cb4dc8f81d9caf4202c32b4c45224c9d4ff92` |
 
 baseline dense buildは7.839秒、BGE-M3 buildは18.134秒だった。モデル設定はPythonの
 recommended-v2から変更せず、BGE-M3 revisionは

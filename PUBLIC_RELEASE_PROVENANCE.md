@@ -22,6 +22,9 @@
   `1625fd66c693bcbca4d9318d69f344e7a46609d0d274036cc50476c4b161a869`
 - OpenAI API use: none during this export. The final local evaluations
   documented for this release did not use the OpenAI API or OpenAI Judge.
+  This statement is limited to the export and final local evaluations;
+  `evaluation/rag_quality_summary.md` retains separate historical OpenAI Judge
+  results and the optional evaluation-helper record.
 - Privacy: no machine-specific absolute local path or personal information is
   recorded in this provenance document.
 

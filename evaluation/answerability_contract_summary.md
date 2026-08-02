@@ -188,8 +188,8 @@ OpenAIを使ったproduction判定も行わない。
 - Retriever、Embedding、FAISS、chunk、corpus、Qwen生成設定: 変更なし
 - 詳細JSONはGit管理外で、API keyや秘密値を含まない
 
-Commit A作成前の監査では、production sourceとtestの最終更新時刻は実測結果保存前であり、
-評価runnerも最初の詳細JSON保存前に確定していた。結果保存後のrepository変更は文書だけで、
-Commit Aは実験時のcode、test、runnerをそのまま評価定義として固定している。詳細JSON自体は
-source commitを直接保持しないため、この対応関係は上記の時刻とGit差分の監査、および
-Commit Aのtree固定に基づく。
+上記の評価定義 commit を作成する前の監査では、production source と test の最終更新時刻は
+実測結果の保存前であり、評価 runner も最初の詳細 JSON を保存する前に確定していた。
+結果保存後の repository 変更は文書だけであり、実験時の code、test、runner は同 commit の
+tree に評価定義として固定されている。詳細 JSON 自体には source commit が記録されて
+いないため、この対応関係は上記の時刻と Git 差分の監査、および同 tree に基づく。

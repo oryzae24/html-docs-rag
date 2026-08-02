@@ -11,7 +11,12 @@
   baseline processed JSONL.
 - OpenAI API and OpenAI Judge were not used.
 
-Experiments run on NVIDIA L4 (23,034 MiB), driver `580.126.20`, PyTorch
+This is a historical evaluation record. At this checkpoint, `recommended`
+identified the configuration now retained as `recommended-v1`; the current
+checkout instead aliases `recommended` to `recommended-v2`. Historical commands
+below assumed a prepared data root supplied by the environment.
+
+Experiments were run on an NVIDIA L4 (23,034 MiB), driver `580.126.20`, PyTorch
 `2.11.0+cu128`, CUDA runtime 12.8. Results from a different GPU are not used for
 latency or resource comparisons.
 
@@ -36,7 +41,7 @@ chunk metadata.
 Both load through the existing Sentence Transformers dependency with
 `trust_remote_code=False`. No third model was considered.
 
-### Development selection
+### Phase A development selection
 
 Only the 26-question Development set was used for model and parameter selection.
 The order was Hit@5, MRR@10, then the smaller/faster configuration. Hybrid uses
@@ -99,7 +104,8 @@ the selected Hybrid baseline, and RAG valid answers increased.
 
 - `isatty()` remains outside Top-10; this is unresolved but unchanged from Hybrid.
 - `EOFError` improved from rank 7 to 2.
-- the `__main__` guard improved from rank 8 to 2; main placement improved 9 to 1.
+- the `__main__` guard improved from rank 8 to 2; main placement improved from
+  rank 9 to rank 1.
 - `re.fullmatch()` is now answered correctly from the correct source.
 - `asyncio.TaskGroup` changed from abstention to a materially correct answer that
   covers cancellation, waiting, and ExceptionGroup handling.
@@ -165,7 +171,7 @@ section is always sent unchanged.
 | 300 / 75 | 28,234 | 10.208 / 337 | 43,367,469 / 33,244,730 bytes | 42.33 s | `b4be25cbf6a569eb644d5a6b6501d14c7dbab7fb13f8316bd40455c1f4dc4b34` | `8a281ba2ed9ade698f3c6ab490a354d6db99fe6441ce2524781f94a69c7dd211` |
 | 400 / 100 | 21,343 | 7.716 / 255 | 32,782,893 / 27,427,403 bytes | 29.06 s | `9a2a33559ad6cf78e342f9c375b186b2a60ae5f30be75a598264ff0e863200e9` | `4e18d80b3566a2b23af00a09ff59d594e0c537304443d68ffb03d433564dc00a` |
 
-### Development selection
+### Phase B development selection
 
 Only Development was used to select the bounded two-setting grid. Candidate k
 30 produced at least 14.46 average unique section candidates in every run and
@@ -300,18 +306,31 @@ Answerability; Combined inherits the section context cost and adds false
 abstentions. No single retrieval metric overrides those contract and semantic
 criteria.
 
-The fixed, explicit recommended command is:
+At this checkpoint, the fixed command was the following; the environment
+provided the prepared data root:
 
 ```bash
 python -m python_doc_rag chat --profile recommended
 ```
 
-It resolves to Hybrid candidate generation, the pinned Apache-2.0 mMARCO MiniLM
-reranker at candidate k 30 / batch 16 / max length 512, Top-5,
+On the current checkout, the equivalent configuration is selected explicitly as
+follows. Replace `/path/to/prepared-data` with the prepared data root.
+
+```bash
+uv run --frozen --extra inference \
+  python -m python_doc_rag chat \
+  --data-root /path/to/prepared-data \
+  --profile recommended-v1
+```
+
+At the checkpoint, `recommended` resolved to Hybrid candidate generation, the
+pinned Apache-2.0 mMARCO MiniLM reranker at candidate k 30 / batch 16 / max
+length 512, Top-5,
 `answer-or-abstain-v1`, and the pinned evaluated Qwen revision in bfloat16.
-`python -m python_doc_rag profile recommended` prints the complete profile, and
-`python -m python_doc_rag check --profile recommended` validates its reused
-baseline index, metadata, manifest, and processed JSONL without loading models.
+The historical `profile recommended` command printed the complete profile, and
+`check --profile recommended` validated its reused baseline index, metadata,
+manifest, and processed JSONL without loading models. Use `recommended-v1` for
+those commands on the current checkout.
 The reranker, embedding model, index, Qwen model, and tokenizer are each built or
 loaded once and reused by `chat`; model-cache/load failures are actionable.
 
@@ -322,7 +341,7 @@ connected to `ask` or `chat`. The complete Section implementation and artifacts
 are retained for the later general-HTML ingestion work, but that next step should
 not assume section parenting won this Python-only tournament.
 
-At the final checkpoint, `uv lock --check`, standard and all-extra 266-test suites,
+At the final checkpoint, `uv lock --check`, the 266-test standard and all-extras suites,
 both ruff runs, and `git diff --check` passed. The real CLI `check --profile
 recommended` validated all 8,677 baseline vectors/metadata records, and a Qwen
 chat smoke answered the `re.fullmatch()` question correctly from the official

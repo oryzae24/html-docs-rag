@@ -2,9 +2,11 @@
 
 ## Python Documentation
 
-The project includes an unchanged-content, deterministically packaged source
-snapshot of the Japanese Python 3.13 documentation under
-`resources/source_snapshots/python-3.13-ja-2026-07-20.zip`.
+The project includes a deterministically packaged source snapshot of the
+Japanese Python 3.13 documentation at
+`resources/source_snapshots/python-3.13-ja-2026-07-20.zip`. Its source-file
+contents are byte-identical to the retained expanded tree recorded at
+acquisition.
 
 - Upstream source: `https://docs.python.org/ja/3.13/archives/python-3.13-docs-html.zip`
 - Acquisition timestamp recorded with the retained expanded tree:
@@ -16,8 +18,8 @@ snapshot of the Japanese Python 3.13 documentation under
 - Provenance:
   `resources/source_snapshots/python-3.13-ja-2026-07-20.provenance.json`
 
-The original archive bytes were no longer available when this repository
-snapshot was made. The project snapshot was produced from the retained expanded
+The original archive bytes were no longer available when this project snapshot
+was made. The project snapshot was produced from the retained expanded
 HTML tree after that tree reproduced the protected chunk corpus byte-for-byte.
 It is therefore not represented as having the original recorded archive SHA.
 The source files' contents were not modified when they were packaged.
