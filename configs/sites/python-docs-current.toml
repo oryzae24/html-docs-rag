@@ -1,0 +1,43 @@
+[dataset]
+name = "Current Python 3.13 Japanese documentation"
+slug = "python-3-13-ja-current"
+language = "ja"
+description = "Mutable upstream snapshot locked on first acquisition"
+
+[loader]
+type = "snapshot-http-archive"
+archive_url = "https://docs.python.org/ja/3.13/archives/python-3.13-docs-html.zip"
+archive_format = "zip"
+archive_root = "python-3.13-docs-html"
+source_base_url = "https://docs.python.org/ja/3.13/"
+include_path_prefixes = [
+  "tutorial/",
+  "library/",
+  "reference/",
+  "howto/",
+  "faq/",
+]
+update_policy = "manual"
+timeout_seconds = 60
+max_retries = 2
+max_archive_bytes = 25000000
+max_members = 2000
+max_member_bytes = 12000000
+max_extracted_bytes = 125000000
+user_agent = "python-doc-rag-assistant/0.1"
+
+[parser]
+type = "python-sphinx"
+python_version = "3.13"
+minimum_section_text_length = 20
+
+[chunking]
+chunk_size = 1000
+chunk_overlap = 150
+
+[index]
+embedding_model = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+embedding_batch_size = 64
+
+[profile]
+prepare = "recommended-v2"

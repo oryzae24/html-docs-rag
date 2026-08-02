@@ -1,0 +1,13 @@
+revision = "multi-kb-service-v1"
+profile = "recommended-v2"
+device = "cuda"
+
+[[knowledge_bases]]
+id = "python-docs"
+display_name = "Python 3.13 日本語公式ドキュメント"
+data_root = "../../example-data/python-docs"
+
+[[knowledge_bases]]
+id = "uv-docs"
+display_name = "uv Documentation"
+data_root = "../../example-data/uv-docs"

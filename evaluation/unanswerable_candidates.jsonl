@@ -1,0 +1,2 @@
+{"id":"terminal-ctrl-z-001","question":"Ctrl+Zを押すとPythonプログラムはどうなりますか？","reason":"端末のジョブ制御は主にOSとシェルの仕様であり、Python 3.13公式文書内に直接的な根拠ページを確認できなかった"}
+{"id":"terminal-eof-keys-001","question":"Ctrl+DとCtrl+ZはEOF入力としてどう違いますか？","reason":"キー操作は端末とOSに依存し、Python公式文書だけではプラットフォーム横断の正解を確定できなかった"}

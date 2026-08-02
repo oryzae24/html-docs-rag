@@ -1,0 +1,11 @@
+transformers
+accelerate
+bitsandbytes
+sentence-transformers
+faiss-cpu
+beautifulsoup4
+lxml
+numpy
+langchain-core
+langchain-text-splitters
+gradio

@@ -1,0 +1,59 @@
+[dataset]
+name = "uv documentation portability smoke"
+slug = "uv-docs-portability-smoke"
+language = "en"
+description = "Bounded portability smoke for the official uv documentation"
+
+[loader]
+type = "bounded-http"
+start_urls = [
+  "https://docs.astral.sh/uv/getting-started/",
+  "https://docs.astral.sh/uv/guides/",
+]
+max_pages = 40
+timeout_seconds = 15
+request_delay_seconds = 0.5
+max_response_bytes = 3000000
+user_agent = "python-doc-rag-assistant-portability-smoke/0.1"
+respect_robots_txt = true
+retain_query = false
+max_retries = 2
+
+[parser]
+type = "generic-html"
+content_selectors = [
+  "article.md-content__inner",
+  "main article",
+  "main",
+]
+exclude_selectors = [
+  "nav",
+  "header",
+  "footer",
+  "aside",
+  ".md-sidebar",
+  ".md-header",
+  ".md-footer",
+  ".md-search",
+  ".md-nav",
+  ".md-content__button",
+  ".md-source",
+  "script",
+  "style",
+]
+title_selectors = ["h1", "title"]
+heading_levels = [1, 2, 3]
+minimum_section_text_length = 20
+fallback_to_body = false
+include_lead_text = true
+
+[chunking]
+chunk_size = 1000
+chunk_overlap = 150
+
+[index]
+embedding_model = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+embedding_batch_size = 64
+
+[profile]
+prepare = "recommended-v2"

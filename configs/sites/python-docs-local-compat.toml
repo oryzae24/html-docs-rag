@@ -1,0 +1,32 @@
+[dataset]
+name = "Python 3.13 Japanese documentation — local compatibility"
+slug = "python-3-13-ja-local-compat"
+language = "ja"
+description = "Compatibility path for a caller-supplied expanded Python HTML tree"
+
+[loader]
+type = "local-html-tree"
+source_base_url = "https://docs.python.org/ja/3.13/"
+include_path_prefixes = [
+  "tutorial/",
+  "library/",
+  "reference/",
+  "howto/",
+  "faq/",
+]
+
+[parser]
+type = "python-sphinx"
+python_version = "3.13"
+minimum_section_text_length = 20
+
+[chunking]
+chunk_size = 1000
+chunk_overlap = 150
+
+[index]
+embedding_model = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+embedding_batch_size = 64
+
+[profile]
+prepare = "recommended-v2"

@@ -1,0 +1,1 @@
+"""Python documentation compatibility components."""

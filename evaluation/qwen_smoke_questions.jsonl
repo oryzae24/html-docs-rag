@@ -1,0 +1,3 @@
+{"question":"list.sort()がNoneを返すのはなぜですか？","expected_url_keywords":["faq/design","tutorial/datastructures"]}
+{"question":"__name__ == '__main__'は何のためですか？","expected_url_keywords":["library/__main__","tutorial/modules"]}
+{"question":"unittestでテストケースを定義する方法は？","expected_url_keywords":["library/unittest"]}

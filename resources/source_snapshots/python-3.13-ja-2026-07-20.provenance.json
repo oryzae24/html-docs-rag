@@ -1,0 +1,61 @@
+{
+  "schema_revision": "python-doc-source-snapshot-provenance-v1",
+  "snapshot_id": "python-3.13-ja-2026-07-20",
+  "dataset_name": "Python 3.13 Japanese documentation — frozen 2026-07-20",
+  "captured_date": "2026-07-20",
+  "upstream": {
+    "requested_archive_url": "https://docs.python.org/ja/3.13/archives/python-3.13-docs-html.zip",
+    "final_archive_url": null,
+    "final_archive_url_recorded": false,
+    "mutable_alias": true,
+    "downloaded_at": "2026-07-20T20:34:21.446060+00:00",
+    "original_recorded_archive_sha256": "f8ddb3454726cbe34580b4c21723128a1b33b50f1155e9b9184cb790db66d9cb",
+    "original_recorded_archive_byte_size": 17367739,
+    "original_archive_bytes_available": false
+  },
+  "project_snapshot": {
+    "relative_path": "resources/source_snapshots/python-3.13-ja-2026-07-20.zip",
+    "sha256": "1fbc311273f7a4302b2929e483b4dded787d7ea89bdcebf74312732376395777",
+    "byte_size": 17310566,
+    "archive_format": "zip",
+    "archive_root": "python-3.13-docs-html",
+    "member_count": 1258,
+    "file_count": 1228,
+    "directory_count": 30,
+    "source_tree_sha256": "fbed1fed2ad21e4f9eee2ce8d2280fc4140959d67de00df03f6f897765ce0a3b",
+    "source_tree_hash_algorithm": "python-doc-rag-expanded-source-tree-v1",
+    "compression": "deflate-level-9",
+    "member_order": "ascending UTF-8 encoded archive path bytes",
+    "fixed_member_timestamp": "2026-07-20T00:00:00",
+    "fixed_directory_mode": "0755",
+    "fixed_file_mode": "0644"
+  },
+  "derivation": {
+    "kind": "deterministic-zip-from-validated-expanded-tree",
+    "project_snapshot_is_original_archive": false,
+    "source_of_truth": "expanded HTML tree retained from the original acquisition",
+    "validation": "The protected corpus generated from the expanded tree was byte-identical to the protected chunk JSONL before this project snapshot was created.",
+    "generator": "python_doc_rag.source_snapshot.create_deterministic_source_snapshot"
+  },
+  "documentation": {
+    "language": "ja",
+    "python_version": "3.13",
+    "rendered_documentation_version": "3.13.14",
+    "source_base_url": "https://docs.python.org/ja/3.13/",
+    "archive_index_last_updated": "2026-07-20T11:45:00+00:00"
+  },
+  "protected_corpus": {
+    "source_pages": 384,
+    "sections": 2766,
+    "chunks": 8677,
+    "chunk_jsonl_sha256": "1625fd66c693bcbca4d9318d69f344e7a46609d0d274036cc50476c4b161a869",
+    "byte_identical": true
+  },
+  "licensing": {
+    "license_html": "python-3.13-docs-html/license.html",
+    "copyright_html": "python-3.13-docs-html/copyright.html",
+    "license_source": "python-3.13-docs-html/_sources/license.rst.txt",
+    "copyright_source": "python-3.13-docs-html/_sources/copyright.rst.txt"
+  },
+  "openai_api_used": false
+}
