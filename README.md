@@ -91,6 +91,9 @@ public Internet.
 - Python 3.12 or 3.13
 - [uv](https://docs.astral.sh/uv/)
 
+The only dependency source of truth is `pyproject.toml` together with
+`uv.lock`; no separate dependency list is maintained.
+
 Create the lightweight development environment from the locked dependencies:
 
 ```bash
@@ -110,8 +113,18 @@ Add the API dependencies when running the service:
 uv sync --frozen --extra inference --extra api
 ```
 
-`requirements-colab.txt` is retained as a compatibility record for an earlier
-GPU environment; it is not the primary installation path.
+Google Colab uses the same frozen lock while excluding development dependencies:
+
+```bash
+uv lock --check
+uv sync --frozen --extra inference --no-dev
+```
+
+Include the API extra only when it is needed in Colab:
+
+```bash
+uv sync --frozen --extra inference --extra api --no-dev
+```
 
 ## CLI
 
